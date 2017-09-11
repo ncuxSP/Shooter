@@ -12,6 +12,7 @@ namespace Engine
 	
 	private:
 		class Graphics *graphics;
+		class Input *input;
 		class SDL_Window *window;
 		class SDL_Renderer *renderer;
 		bool is_failed;

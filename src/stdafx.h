@@ -8,4 +8,6 @@
 
 using namespace std;
 
+#include "SDL.h"
+
 #include "Framework/Vector.h"

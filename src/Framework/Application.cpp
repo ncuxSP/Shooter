@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "SDL.h"
 #include "Image.h"
 #include "Graphics.h"
+#include "Input.h"
 
 #include "Application.h"
 
@@ -37,10 +37,12 @@ namespace Engine
 		}
 	
 		graphics = new Graphics(renderer);
+		input = new Input();
 	}
 	
 	Application::~Application()
 	{
+		delete input;
 		delete graphics;
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
@@ -53,23 +55,48 @@ namespace Engine
 		{
 			return 1;
 		}
-	
+
 		SDL_RenderSetLogicalSize(renderer, size.w, size.h);
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	
+
 		Image *hero = graphics->NewImage("hero.bmp");
 		Image *block = new Image(Size(128), Color(0, 255));
-		block->FillRect(Point(4), Size(120), Color(255, 255));
+		block->FillRect(Point(4), Size(120), Color(255, 0));
 
-		graphics->Begin();
-		graphics->DrawImage(hero, Point(100, 300), 30.f);
-		graphics->DrawImage(block, Point(300, 100));
-		graphics->End();
+		float angle = 0.f;
+		Point pos(100, 300);
+
+		while (!input->IsWillQuit())
+		{
+			input->Update();
+
+			angle += 0.1f;
+
+			if (input->IsKeyDown(SDL_SCANCODE_W))
+			{
+				pos.y -= 10;
+			}
+			if (input->IsKeyDown(SDL_SCANCODE_S))
+			{
+				pos.y += 10;
+			}
+			if (input->IsKeyPressed(SDL_SCANCODE_A))
+			{
+				pos.x -= 10;
+			}
+			if (input->IsKeyPressed(SDL_SCANCODE_D))
+			{
+				pos.x += 10;
+			}
+
+			graphics->Begin();
+			graphics->DrawImage(hero, pos, angle);
+			graphics->DrawImage(block, Point(300, 100 + static_cast<uint32_t>(angle)));
+			graphics->End();
+		}
 
 		delete block;
 		delete hero;
-	
-		SDL_Delay(5000);
 	
 		return 0;
 	}
