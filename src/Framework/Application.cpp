@@ -62,14 +62,14 @@ namespace Engine
 		block->FillRect(Point(4), Size(120), Color(255, 255));
 
 		graphics->Begin();
-		graphics->DrawImage(hero, Point(100, 300));
+		graphics->DrawImage(hero, Point(100, 300), 30.f);
 		graphics->DrawImage(block, Point(300, 100));
 		graphics->End();
 
 		delete block;
 		delete hero;
 	
-		SDL_Delay(4000);
+		SDL_Delay(5000);
 	
 		return 0;
 	}

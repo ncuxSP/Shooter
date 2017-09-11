@@ -21,6 +21,9 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Input.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Application.h">
@@ -34,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Framework\Vector.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>

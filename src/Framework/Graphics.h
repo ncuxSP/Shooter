@@ -10,6 +10,7 @@ namespace Engine
 		Image *NewImage(const string &_file_name);
 		void Begin();
 		void DrawImage(Image *_img, const Point &_position);
+		void DrawImage(Image *_img, const Point &_position, float _angle);
 		void End();
 	
 	private:

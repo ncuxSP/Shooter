@@ -149,6 +149,7 @@
     <ClCompile Include="Framework\Application.cpp" />
     <ClCompile Include="Framework\Graphics.cpp" />
     <ClCompile Include="Framework\Image.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
@@ -157,6 +158,7 @@
     <ClInclude Include="Framework\Graphics.h" />
     <ClInclude Include="Framework\Image.h" />
     <ClInclude Include="Framework\Vector.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
