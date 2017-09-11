@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "SDL.h"
 #include "Image.h"
 
 #include "Graphics.h"

@@ -24,6 +24,9 @@
     <ClCompile Include="Framework\Input.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\World.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Application.h">
@@ -42,5 +45,17 @@
     <ClInclude Include="Framework\Input.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Framework\World.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Entities.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shooter.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

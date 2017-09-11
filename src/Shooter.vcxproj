@@ -150,16 +150,23 @@
     <ClCompile Include="Framework\Graphics.cpp" />
     <ClCompile Include="Framework\Image.cpp" />
     <ClCompile Include="Framework\Input.cpp" />
+    <ClCompile Include="Framework\World.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Application.h" />
+    <ClInclude Include="Framework\Entities.h" />
     <ClInclude Include="Framework\Graphics.h" />
     <ClInclude Include="Framework\Image.h" />
     <ClInclude Include="Framework\Input.h" />
     <ClInclude Include="Framework\Vector.h" />
+    <ClInclude Include="Framework\World.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shooter.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
