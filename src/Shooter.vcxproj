@@ -156,6 +156,7 @@
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\Graphics.h" />
     <ClInclude Include="Framework\Image.h" />
+    <ClInclude Include="Framework\Vector.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

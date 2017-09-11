@@ -5,45 +5,29 @@
 
 #include "Graphics.h"
 
-Graphics::Graphics(SDL_Renderer *_renderer)
-	:	renderer(_renderer)
+namespace Engine
 {
-}
-
-Image * Graphics::NewImage(const string &_file_name)
-{
-	SDL_Surface *surface = SDL_LoadBMP(_file_name.c_str());
-	if (surface == nullptr)
+	Graphics::Graphics(SDL_Renderer *_renderer)
+		:	renderer(_renderer)
 	{
-		cout << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
-		return nullptr;
-	}
-
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-	SDL_FreeSurface(surface);
-
-	if (texture == nullptr)
-	{
-		cout << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
-		return nullptr;
-	}
-
-	Image *image = new Image(texture);
-	if (image == nullptr)
-	{
-		cout << "Graphics::NewImage: Image could not be created" << endl;
-		return nullptr;
 	}
 	
-	return image;
-}
+	Image * Graphics::NewImage(const string &_file_name)
+	{
+		return new Image(_file_name);
+	}
+	
+	bool Graphics::DrawImage(Image *_img, const Point &_position)
+	{
+		_img->Init(renderer);
 
-bool Graphics::DrawImage(Image *_img, uint32_t _x, uint32_t _y)
-{
-	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, _img->GetTexture(), NULL, NULL);
-	SDL_RenderPresent(renderer);
+		SDL_Rect src{ 0, 0, _img->size.w, _img->size.h };
+		SDL_Rect dst{ _position.x, _position.y, _img->size.w, _img->size.h };
 
-	return true;
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, _img->texture, &src, &dst);
+		SDL_RenderPresent(renderer);
+	
+		return true;
+	}
 }

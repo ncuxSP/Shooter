@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-	Application app("Shooter", 1280, 800);
+	Engine::Application app("Shooter", Engine::Size(1280, 800));
 
 	return app.Run();
 }
