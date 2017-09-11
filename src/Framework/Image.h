@@ -6,8 +6,10 @@ namespace Engine
 	{
 	public:
 		Image(const string &_filename);
-		Image(const Size &_size);
+		Image(const Size &_size, const Color &_color);
 		~Image();
+
+		void FillRect(const Point &_position, const Size &_size, const Color &_color);
 
 	private:
 		friend class Graphics;

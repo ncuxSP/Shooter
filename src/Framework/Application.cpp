@@ -57,11 +57,17 @@ namespace Engine
 		SDL_RenderSetLogicalSize(renderer, size.w, size.h);
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	
-		Image *image = graphics->NewImage("hero.bmp");
-	
-		graphics->DrawImage(image, Point(100, 300));
-	
-		delete image;
+		Image *hero = graphics->NewImage("hero.bmp");
+		Image *block = new Image(Size(128), Color(0, 255));
+		block->FillRect(Point(4), Size(120), Color(255, 255));
+
+		graphics->Begin();
+		graphics->DrawImage(hero, Point(100, 300));
+		graphics->DrawImage(block, Point(300, 100));
+		graphics->End();
+
+		delete block;
+		delete hero;
 	
 		SDL_Delay(4000);
 	

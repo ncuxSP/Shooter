@@ -8,7 +8,9 @@ namespace Engine
 		Graphics(SDL_Renderer *_renderer);
 	
 		Image *NewImage(const string &_file_name);
-		bool DrawImage(Image *_img, const Point &_position);
+		void Begin();
+		void DrawImage(Image *_img, const Point &_position);
+		void End();
 	
 	private:
 		SDL_Renderer *renderer;

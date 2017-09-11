@@ -17,17 +17,24 @@ namespace Engine
 		return new Image(_file_name);
 	}
 	
-	bool Graphics::DrawImage(Image *_img, const Point &_position)
+	void Graphics::Begin()
+	{
+		SDL_RenderClear(renderer);
+	}
+
+	void Graphics::DrawImage(Image *_img, const Point &_position)
 	{
 		_img->Init(renderer);
 
 		SDL_Rect src{ 0, 0, _img->size.w, _img->size.h };
 		SDL_Rect dst{ _position.x, _position.y, _img->size.w, _img->size.h };
 
-		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, _img->texture, &src, &dst);
-		SDL_RenderPresent(renderer);
-	
-		return true;
 	}
+
+	void Graphics::End()
+	{
+		SDL_RenderPresent(renderer);
+	}
+
 }
