@@ -3,25 +3,25 @@
 namespace Engine
 {
 	template<typename Type> 
-	inline bool math_vector_equal(Type _a, Type _b)
+	inline bool MathVectorEqual(Type _a, Type _b)
 	{
 		return (_a == _b);
 	}
 
-	inline float math_vector_equal(float _a, float _b)
+	inline bool MathVectorEqual(float _a, float _b)
 	{
 		return (fabs(_a - _b) < std::numeric_limits<float>::epsilon());
 	}
 
 	template<typename Type, uint32_t Size> 
-	class math_vector_base
+	class MathVectorBase
 	{
 	public:
 		Type v[Size];
 	};
 
 	template<typename Type>
-	class math_vector_base <Type, 2>
+	class MathVectorBase <Type, 2>
 	{
 	public:
 		union
@@ -40,18 +40,18 @@ namespace Engine
 		};
 
 	public:
-		inline math_vector_base()
+		inline MathVectorBase()
 		{
 		}
 
-		inline math_vector_base(Type _x, Type _y)
+		inline MathVectorBase(Type _x, Type _y)
 			: x(_x), y(_y)
 		{
 		}
 	};
 
 	template<typename Type> 
-	class math_vector_base <Type, 3>
+	class MathVectorBase <Type, 3>
 	{
 	public:
 		union
@@ -70,18 +70,18 @@ namespace Engine
 		};
 
 	public:
-		inline math_vector_base()
+		inline MathVectorBase()
 		{
 		}
 
-		inline math_vector_base(Type _x, Type _y, Type _z)
+		inline MathVectorBase(Type _x, Type _y, Type _z)
 			: x(_x), y(_y), z(_z)
 		{
 		}
 	};
 
 	template<typename Type>
-	class math_vector_base <Type, 4>
+	class MathVectorBase <Type, 4>
 	{
 	public:
 		union
@@ -100,91 +100,91 @@ namespace Engine
 		};
 
 	public:
-		inline math_vector_base()
+		inline MathVectorBase()
 		{
 		}
 
-		inline math_vector_base(Type _x, Type _y, Type _z, Type _w)
+		inline MathVectorBase(Type _x, Type _y, Type _z, Type _w)
 			: x(_x), y(_y), z(_z), w(_w)
 		{
 		}
 
-		inline math_vector_base(Type _rgb, Type _a)
+		inline MathVectorBase(Type _rgb, Type _a)
 			: x(_rgb), y(_rgb), z(_rgb), w(_a)
 		{
 		}
 	};
 
 	template<typename Type, uint32_t Size> 
-	class math_vector : public math_vector_base<Type, Size>
+	class MathVector : public MathVectorBase<Type, Size>
 	{
 	public:
-		inline math_vector()
+		inline MathVector()
 		{
 		}
 
-		inline math_vector(const math_vector &_vector)
+		inline MathVector(const MathVector &_vector)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
+				MathVectorBase<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
 			}
 		}
 
 		template<typename _Type, uint32_t _Size>
-		inline math_vector(const math_vector<_Type, _Size> &_vector)
+		inline MathVector(const MathVector<_Type, _Size> &_vector)
 		{
-			uint32_t MIN_SIZE = Size < _Size ? Size : _Size;
+			const uint32_t min_size = Size < _Size ? Size : _Size;
 			
-			for (uint32_t i = 0; i < MIN_SIZE; ++i)
+			for (uint32_t i = 0; i < min_size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
+				MathVectorBase<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
 			}
 
 			for (uint32_t i = _Size; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = static_cast<Type>(0);
+				MathVectorBase<Type, Size>::v[i] = static_cast<Type>(0);
 			}
 		}
 
-		inline math_vector(const Type *_v)
+		inline MathVector(const Type *_v)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = _v[i];
+				MathVectorBase<Type, Size>::v[i] = _v[i];
 			}
 		}
 
-		inline math_vector(Type _value)
+		inline MathVector(Type _value)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = _value;
+				MathVectorBase<Type, Size>::v[i] = _value;
 			}
 		}
 
-		inline math_vector(Type _x, Type _y)
-			: math_vector_base<Type, Size>(_x, _y)
+		inline MathVector(Type _x, Type _y)
+			: MathVectorBase<Type, Size>(_x, _y)
 		{
 		}
 
-		inline math_vector(Type _x, Type _y, Type _z)
-			: math_vector_base<Type, Size>(_x, _y, _z)
+		inline MathVector(Type _x, Type _y, Type _z)
+			: MathVectorBase<Type, Size>(_x, _y, _z)
 		{
 		}
 
-		inline math_vector(Type _x, Type _y, Type _z, Type _w)
-			: math_vector_base<Type, Size>(_x, _y, _z, _w)
+		inline MathVector(Type _x, Type _y, Type _z, Type _w)
+			: MathVectorBase<Type, Size>(_x, _y, _z, _w)
 		{
 		}
 
-		inline Type length_square() const
+		inline Type LengthSquare() const
 		{
 			Type length = static_cast<Type>(0);
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				length += math_vector_base<Type, Size>::v[i] * math_vector_base<Type, Size>::v[i];
+				length += MathVectorBase<Type, Size>::v[i] * MathVectorBase<Type, Size>::v[i];
 			}
 
 			return length;
@@ -192,27 +192,27 @@ namespace Engine
 
 		inline float length() const
 		{
-			return sqrtf(static_cast<float>(length_square()));
+			return sqrtf(static_cast<float>(LengthSquare()));
 		}
 
-		inline void normalize()
+		inline void Normalize()
 		{
 			set_length(static_cast<Type>(1));
 		}
 
-		inline math_vector get_normalized() const
+		inline MathVector GetNormalized() const
 		{
-			math_vector normalized_vector = *this;
-			normalized_vector.normalize();
+			MathVector normalized_vector = *this;
+			normalized_vector.Normalize();
 
 			return normalized_vector;
 		}
 
-		inline void set_length(float _length)
+		inline void SetLength(float _length)
 		{
 			float magnitude = length() / _length;
 
-			if (fabs(magnitude) < M_EPSILON)
+			if (fabs(magnitude) < std::numeric_limits<float>::epsilon())
 			{
 				return;
 			}
@@ -220,181 +220,181 @@ namespace Engine
 			*this /= magnitude;
 		}
 
-		inline void copy(Type *_v)
+		inline void Copy(Type *_v)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				_v[i] = math_vector_base<Type, Size>::v[i];
+				_v[i] = MathVectorBase<Type, Size>::v[i];
 			}
 		}
 
-		inline math_vector operator = (const math_vector &_vector)
+		inline MathVector operator = (const MathVector &_vector)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = _vector.v[i];
+				MathVectorBase<Type, Size>::v[i] = _vector.v[i];
 			}
 
 			return *this;
 		}
 
 		template<typename _Type, uint32_t _Size>
-		inline math_vector<Type, Size> operator = (const math_vector<_Type, _Size> &_vector)
+		inline MathVector<Type, Size> operator = (const MathVector<_Type, _Size> &_vector)
 		{
-			uint32_t MIN_SIZE = Size < _Size ? Size : _Size;
+			const uint32_t min_size = Size < _Size ? Size : _Size;
 			
-			for (uint32_t i = 0; i < MIN_SIZE; ++i)
+			for (uint32_t i = 0; i < min_size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
+				MathVectorBase<Type, Size>::v[i] = static_cast<Type>(_vector.v[i]);
 			}
 
 			for (uint32_t i = _Size; i < Size; ++i)
 			{
-				math_vector_base<Type, Size>::v[i] = static_cast<Type>(0);
+				MathVectorBase<Type, Size>::v[i] = static_cast<Type>(0);
 			}
 
 			return *this;
 		}
 
-		inline math_vector operator + (const math_vector &_vector) const
+		inline MathVector operator + (const MathVector &_vector) const
 		{
-			math_vector new_vector;
+			MathVector new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i] + _vector.v[i];
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] + _vector.v[i];
 			}
 
 			return new_vector;
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> operator + (const math_vector<_Type, Size> &_vector) const
+		inline MathVector<Type, Size> operator + (const MathVector<_Type, Size> &_vector) const
 		{
-			math_vector<Type, Size> new_vector;
+			MathVector<Type, Size> new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i] + static_cast<Type>(_vector.v[i]);
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] + static_cast<Type>(_vector.v[i]);
 			}
 
 			return new_vector;
 		}
 
-		inline math_vector operator - (const math_vector &_vector) const
+		inline MathVector operator - (const MathVector &_vector) const
 		{
-			math_vector new_vector;
+			MathVector new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i] - _vector.v[i];
-			}
-
-			return new_vector;
-		}
-
-		template<typename _Type>
-		inline math_vector<Type, Size> operator - (const math_vector<_Type, Size> &_vector) const
-		{
-			math_vector<Type, Size> new_vector;
-
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i] - static_cast<Type>(_vector.v[i]);
-			}
-
-			return new_vector;
-		}
-
-		inline math_vector operator * (const math_vector &_vector) const
-		{
-			math_vector new_vector;
-
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i]  *_vector.v[i];
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] - _vector.v[i];
 			}
 
 			return new_vector;
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> operator * (const math_vector<_Type, Size> &_vector) const
+		inline MathVector<Type, Size> operator - (const MathVector<_Type, Size> &_vector) const
 		{
-			math_vector<Type, Size> new_vector;
+			MathVector<Type, Size> new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = static_cast<Type>(math_vector_base<Type, Size>::v[i]  *_vector.v[i]);
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] - static_cast<Type>(_vector.v[i]);
 			}
 
 			return new_vector;
 		}
 
-		inline math_vector operator / (const math_vector &_vector) const
+		inline MathVector operator * (const MathVector &_vector) const
 		{
-			math_vector new_vector;
+			MathVector new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = math_vector_base<Type, Size>::v[i] / _vector.v[i];
-			}
-
-			return new_vector;
-		}
-
-		template<typename _Type>
-		inline math_vector<Type, Size> operator / (const math_vector<_Type, Size> &_vector) const
-		{
-			math_vector<Type, Size> new_vector;
-
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				new_vector.v[i] = static_cast<Type>(math_vector_base<Type, Size>::v[i] / _vector.v[i]);
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i]  *_vector.v[i];
 			}
 
 			return new_vector;
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> operator * (_Type _scale) const
+		inline MathVector<Type, Size> operator * (const MathVector<_Type, Size> &_vector) const
 		{
-			math_vector<Type, Size> new_vector;
+			MathVector<Type, Size> new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = static_cast<Type>(math_vector_base<Type, Size>::v[i]  *_scale);
+				new_vector.v[i] = static_cast<Type>(MathVectorBase<Type, Size>::v[i]  *_vector.v[i]);
+			}
+
+			return new_vector;
+		}
+
+		inline MathVector operator / (const MathVector &_vector) const
+		{
+			MathVector new_vector;
+
+			for (uint32_t i = 0; i < Size; ++i)
+			{
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] / _vector.v[i];
 			}
 
 			return new_vector;
 		}
 
 		template<typename _Type>
-		inline math_vector operator / (_Type _scale) const
+		inline MathVector<Type, Size> operator / (const MathVector<_Type, Size> &_vector) const
 		{
-			math_vector<Type, Size> new_vector;
+			MathVector<Type, Size> new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = static_cast<Type>(math_vector_base<Type, Size>::v[i] / _scale);
+				new_vector.v[i] = static_cast<Type>(MathVectorBase<Type, Size>::v[i] / _vector.v[i]);
 			}
 
 			return new_vector;
 		}
 
-		inline math_vector operator - (void) const
+		template<typename _Type>
+		inline MathVector<Type, Size> operator * (_Type _scale) const
 		{
-			math_vector new_vector;
+			MathVector<Type, Size> new_vector;
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = -math_vector_base<Type, Size>::v[i];
+				new_vector.v[i] = static_cast<Type>(MathVectorBase<Type, Size>::v[i]  *_scale);
 			}
 
 			return new_vector;
 		}
 
-		inline math_vector & operator += (const math_vector &_vector)
+		template<typename _Type>
+		inline MathVector operator / (_Type _scale) const
+		{
+			MathVector<Type, Size> new_vector;
+
+			for (uint32_t i = 0; i < Size; ++i)
+			{
+				new_vector.v[i] = static_cast<Type>(MathVectorBase<Type, Size>::v[i] / _scale);
+			}
+
+			return new_vector;
+		}
+
+		inline MathVector operator - (void) const
+		{
+			MathVector new_vector;
+
+			for (uint32_t i = 0; i < Size; ++i)
+			{
+				new_vector.v[i] = -MathVectorBase<Type, Size>::v[i];
+			}
+
+			return new_vector;
+		}
+
+		inline MathVector & operator += (const MathVector &_vector)
 		{
 			*this = *this + _vector;
 
@@ -402,14 +402,14 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> & operator += (const math_vector<_Type, Size> &_vector)
+		inline MathVector<Type, Size> & operator += (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this + _vector;
 
 			return *this;
 		}
 
-		inline math_vector & operator -= (const math_vector &_vector)
+		inline MathVector & operator -= (const MathVector &_vector)
 		{
 			*this = *this - _vector;
 
@@ -417,14 +417,14 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> & operator -= (const math_vector<_Type, Size> &_vector)
+		inline MathVector<Type, Size> & operator -= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this - _vector;
 
 			return *this;
 		}
 
-		inline math_vector & operator *= (const math_vector &_vector)
+		inline MathVector & operator *= (const MathVector &_vector)
 		{
 			*this = *this  *_vector;
 
@@ -432,14 +432,14 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> & operator *= (const math_vector<_Type, Size> &_vector)
+		inline MathVector<Type, Size> & operator *= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this  *_vector;
 
 			return *this;
 		}
 
-		inline math_vector & operator /= (const math_vector &_vector)
+		inline MathVector & operator /= (const MathVector &_vector)
 		{
 			*this = *this / _vector;
 
@@ -447,7 +447,7 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector<Type, Size> & operator /= (const math_vector<_Type, Size> &_vector)
+		inline MathVector<Type, Size> & operator /= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this / _vector;
 
@@ -455,7 +455,7 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector & operator *= (_Type _scale)
+		inline MathVector & operator *= (_Type _scale)
 		{
 			*this = *this  *_scale;
 
@@ -463,18 +463,18 @@ namespace Engine
 		}
 
 		template<typename _Type>
-		inline math_vector & operator /= (_Type _scale)
+		inline MathVector & operator /= (_Type _scale)
 		{
 			*this = *this / _scale;
 
 			return *this;
 		}
 
-		inline bool operator == (const math_vector &_vector) const
+		inline bool operator == (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (!math_vector_equal(math_vector_base<Type, Size>::v[i], _vector.v[i]))
+				if (!MathVectorEqual(MathVectorBase<Type, Size>::v[i], _vector.v[i]))
 				{
 					return false;
 				}
@@ -483,11 +483,11 @@ namespace Engine
 			return true;
 		}
 
-		inline bool operator != (const math_vector &_vector) const
+		inline bool operator != (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (!math_vector_equal(math_vector_base<Type, Size>::v[i], _vector.v[i]))
+				if (!MathVectorEqual(MathVectorBase<Type, Size>::v[i], _vector.v[i]))
 				{
 					return true;
 				}
@@ -496,11 +496,11 @@ namespace Engine
 			return false;
 		}
 
-		inline bool operator <= (const math_vector &_vector) const
+		inline bool operator <= (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (math_vector_base<Type, Size>::v[i] > _vector.v[i])
+				if (MathVectorBase<Type, Size>::v[i] > _vector.v[i])
 				{
 					return false;
 				}
@@ -509,11 +509,11 @@ namespace Engine
 			return true;
 		}
 
-		inline bool operator >= (const math_vector &_vector) const
+		inline bool operator >= (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (math_vector_base<Type, Size>::v[i] < _vector.v[i])
+				if (MathVectorBase<Type, Size>::v[i] < _vector.v[i])
 				{
 					return false;
 				}
@@ -522,11 +522,11 @@ namespace Engine
 			return true;
 		}
 
-		inline bool operator < (const math_vector &_vector) const
+		inline bool operator < (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (math_vector_base<Type, Size>::v[i] >= _vector.v[i])
+				if (MathVectorBase<Type, Size>::v[i] >= _vector.v[i])
 				{
 					return false;
 				}
@@ -535,11 +535,11 @@ namespace Engine
 			return true;
 		}
 
-		inline bool operator > (const math_vector &_vector) const
+		inline bool operator > (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				if (math_vector_base<Type, Size>::v[i] <= _vector.v[i])
+				if (MathVectorBase<Type, Size>::v[i] <= _vector.v[i])
 				{
 					return false;
 				}
@@ -550,7 +550,7 @@ namespace Engine
 	};
 
 	template<typename Type, uint32_t Size>
-	inline Type dot_product(const math_vector<Type, Size> &_a, const math_vector<Type, Size> &_b)
+	inline Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
 	{
 		Type result = static_cast<Type>(0);
 
@@ -563,9 +563,9 @@ namespace Engine
 	}
 
 	template<typename Type>
-	inline math_vector<Type, 3> cross_product(const math_vector<Type, 3> &_a, const math_vector<Type, 3> &_b)
+	inline MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
 	{
-		math_vector<Type, 3> result;
+		MathVector<Type, 3> result;
 
 		result.x = _a.y  *_b.z - _a.z  *_b.y;
 		result.y = _a.z  *_b.x - _a.x  *_b.z;
@@ -575,22 +575,22 @@ namespace Engine
 	}
 
 	template<typename Type, uint32_t Size>
-	inline bool is_inside_segment(const math_vector<Type, Size> &_a, const math_vector<Type, Size> &_b,	const math_vector<Type, Size> &_point)
+	inline bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b,	const MathVector<Type, Size> &_point)
 	{
-		return (dot_product((_a - _point), (_b - _point)) <= 0);
+		return (DotProduct((_a - _point), (_b - _point)) <= 0);
 	}
 
-	typedef math_vector<float, 2>		vec2f;
-	typedef math_vector<float, 3>		vec3f;
+	typedef MathVector<float, 2>	vec2f;
+	typedef MathVector<float, 3>	vec3f;
 
-	typedef math_vector<int32_t, 2>		vec2i;
-	typedef math_vector<int32_t, 3>		vec3i;
+	typedef MathVector<int32_t, 2>	vec2i;
+	typedef MathVector<int32_t, 3>	vec3i;
 
-	typedef math_vector<uint32_t, 2>	vec2ui;
-	typedef math_vector<uint32_t, 3>	vec3ui;
-	typedef math_vector<uint32_t, 4>	vec4ui;
+	typedef MathVector<uint32_t, 2>	vec2ui;
+	typedef MathVector<uint32_t, 3>	vec3ui;
+	typedef MathVector<uint32_t, 4>	vec4ui;
 
-	typedef math_vector<uint8_t, 4>		vec4ui8;
+	typedef MathVector<uint8_t, 4>	vec4ui8;
 
 	using Size = vec2ui;
 	using Point = vec2i;
