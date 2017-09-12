@@ -217,7 +217,7 @@ namespace Engine
 		}
 		else
 		{
-			return ComponentPtr<T>(nullptr);
+			return ComponentPtr<T>();
 		}
 	}
 

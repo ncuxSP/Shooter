@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <chrono>
 #include <memory>
+#include <random>
+#include <complex>
 
 using namespace std;
 
@@ -21,6 +23,7 @@ using namespace std;
 #include "Framework/Image.h"
 #include "Framework/Graphics.h"
 #include "Framework/Input.h"
+#include "Framework/Random.h"
 #include "Framework/Entities.h"
 #include "Framework/World.h"
 #include "Framework/Application.h"

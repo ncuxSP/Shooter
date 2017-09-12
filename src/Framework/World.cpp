@@ -10,15 +10,15 @@ namespace Engine
 	
 	World::~World()
 	{
-		for (auto *entity : entities)
-		{
-			Emit<Events::OnEntityRemoved>({ entity });
-			delete entity;
-		}
 		for (auto *system : systems)
 		{
 			system->UnConfigure(this);
 			delete system;
+		}
+		for (auto *entity : entities)
+		{
+			Emit<Events::OnEntityRemoved>({ entity });
+			delete entity;
 		}
 	}
 	
@@ -26,7 +26,7 @@ namespace Engine
 	{
 		++last_id;
 		auto entity = new Entity(this, last_id);
-		entities.push_back(entity);
+		new_entities.push_back(entity);
 
 		Emit<Events::OnEntityCreated>({ entity });
 
@@ -47,6 +47,12 @@ namespace Engine
 		for (auto *system : systems)
 		{
 			system->Update(this, _dt);
+		}
+
+		if (new_entities.size() > 0)
+		{
+			entities.insert(entities.end(), new_entities.begin(), new_entities.end());
+			new_entities.clear();
 		}
 	}
 	

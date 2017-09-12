@@ -10,7 +10,7 @@ namespace Engine
 
 	inline bool MathVectorEqual(float _a, float _b)
 	{
-		return (fabs(_a - _b) < std::numeric_limits<float>::epsilon());
+		return (fabs(_a - _b) < numeric_limits<float>::epsilon());
 	}
 
 	template<typename Type, uint32_t Size> 

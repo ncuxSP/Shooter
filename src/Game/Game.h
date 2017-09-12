@@ -13,8 +13,4 @@ public:
 
 private:
 	unique_ptr<World> world;
-	unique_ptr<Entity> e;
-
-	Image *hero;
-	Image *block;
 };

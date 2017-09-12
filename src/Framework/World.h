@@ -38,6 +38,7 @@ namespace Engine
 
 	private:
 		vector<Entity *> entities;
+		vector<Entity *> new_entities;
 		vector<EntitySystem *> systems;
 		unordered_map<Internal::TypeIndex, vector<Internal::BaseSubscriber *>> subscribers;
 		uint32_t last_id;

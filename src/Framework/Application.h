@@ -16,8 +16,8 @@ namespace Engine
 		virtual void OnEnd();
 
 	protected:
-		class Graphics *graphics;
-		class Input *input;
+		Graphics *graphics;
+		Input *input;
 		Size size;
 
 	private:

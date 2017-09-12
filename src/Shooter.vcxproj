@@ -152,6 +152,7 @@
     <ClCompile Include="Framework\Input.cpp" />
     <ClCompile Include="Framework\World.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Translation.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
@@ -161,9 +162,11 @@
     <ClInclude Include="Framework\Graphics.h" />
     <ClInclude Include="Framework\Image.h" />
     <ClInclude Include="Framework\Input.h" />
+    <ClInclude Include="Framework\Random.h" />
     <ClInclude Include="Framework\Vector.h" />
     <ClInclude Include="Framework\World.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\Translation.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
