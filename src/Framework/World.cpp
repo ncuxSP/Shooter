@@ -1,9 +1,5 @@
 #include "stdafx.h"
 
-#include "Entities.h"
-
-#include "World.h"
-
 namespace Engine
 {
 	World::World()

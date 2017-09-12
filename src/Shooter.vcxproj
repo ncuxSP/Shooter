@@ -151,6 +151,7 @@
     <ClCompile Include="Framework\Image.cpp" />
     <ClCompile Include="Framework\Input.cpp" />
     <ClCompile Include="Framework\World.cpp" />
+    <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Framework\Input.h" />
     <ClInclude Include="Framework\Vector.h" />
     <ClInclude Include="Framework\World.h" />
+    <ClInclude Include="Game\Game.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

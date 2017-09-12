@@ -1,14 +1,5 @@
 #include "stdafx.h"
 
-#include "Image.h"
-#include "Graphics.h"
-#include "Input.h"
-
-#include "Framework/Entities.h"
-#include "Framework/World.h"
-
-#include "Application.h"
-
 namespace Engine
 {
 	Application::Application(const string &_name, const Size &_size)
@@ -31,15 +22,7 @@ namespace Engine
 			is_failed = true;
 		}
 	
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	
-		if (renderer == nullptr)
-		{
-			cout << "Failed to create renderer : " << SDL_GetError() << endl;
-			is_failed = true;
-		}
-	
-		graphics = new Graphics(renderer);
+		graphics = new Graphics(window, size);
 		input = new Input();
 	}
 	
@@ -47,63 +30,9 @@ namespace Engine
 	{
 		delete input;
 		delete graphics;
-		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
 		SDL_Quit();
 	}
-
-	struct Rotation
-	{
-		Rotation(float _angle) : angle(_angle) {}
-
-		float angle;
-	};
-
-	struct Position
-	{
-		Position(const Point &_pos) : pos(_pos) {}
-
-		Point pos;
-	};
-
-	class RotationSystem : public EntitySystem, public EventSubscriber<Events::OnComponentAssigned<Rotation>>
-	{
-		virtual ~RotationSystem() override {}
-
-		virtual void Configure(World* _world) override
-		{
-			_world->Subscribe<Events::OnComponentAssigned<Rotation>>(this);
-		}
-
-		virtual void UnConfigure(World* _world) override
-		{
-			_world->UnSubscribeAll(this);
-		}
-
-		virtual void Update(World* _world, float _dt) override
-		{
-			_world->Each<Rotation>([&](Entity *_entity, ComponentPtr<Rotation> _rot) -> void
-			{
-				_rot->angle += _dt;
-			});
-			_world->Each<Rotation, Position>([&](Entity *_entity, ComponentPtr<Rotation> _rot, ComponentPtr<Position> _pos) -> void
-			{
-				if (_rot->angle > 360.f)
-				{
-					_rot->angle = 180.f;
-				}
-				if (_pos->pos.x > 300.f)
-				{
-					_pos->pos.x = 100.f;
-				}
-			});
-		}
-
-		virtual void Receive(World *_world, const Events::OnComponentAssigned<Rotation> &_event) override
-		{
-			_event.component->angle = 30.f;
-		}
-	};
 	
 	int Application::Run()
 	{
@@ -112,54 +41,51 @@ namespace Engine
 			return 1;
 		}
 
-		World world;
-		world.RegisterSystem(new RotationSystem());
+		using Time = chrono::high_resolution_clock;
+		using Seconds = chrono::duration<float>;
 
-		auto e = world.Create();
-		e->Assign<Rotation>(0.f);
-		e->Assign<Position>(Point(100, 300));
+		OnBegin();
 
-		SDL_RenderSetLogicalSize(renderer, size.w, size.h);
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-		Image *hero = graphics->NewImage("hero.bmp");
-		Image *block = new Image(Size(128), Color(0, 255));
-		block->FillRect(Point(4), Size(120), Color(255, 0));
-
-		float angle = 0.f;
-		Point pos(100, 300);
+		auto last_tick = Time::now();
 
 		while (!input->IsWillQuit())
 		{
 			input->Update();
-			world.Update(0.5f);
 
-			if (input->IsKeyDown(SDL_SCANCODE_W))
-			{
-				e->Get<Position>()->pos.y -= 10;
-			}
-			if (input->IsKeyDown(SDL_SCANCODE_S))
-			{
-				e->Get<Position>()->pos.y += 10;
-			}
-			if (input->IsKeyPressed(SDL_SCANCODE_A))
-			{
-				e->Get<Position>()->pos.x -= 10;
-			}
-			if (input->IsKeyPressed(SDL_SCANCODE_D))
-			{
-				e->Get<Position>()->pos.x += 10;
-			}
+			auto current_tick = Time::now();
+			Seconds dt = current_tick - last_tick;
+			last_tick = current_tick;
+
+			OnUpdate(dt.count());
 
 			graphics->Begin();
-			graphics->DrawImage(hero, pos, e->Get<Rotation>()->angle);
-			graphics->DrawImage(block, e->Get<Position>()->pos);
+			OnRender();
 			graphics->End();
 		}
 
-		delete block;
-		delete hero;
+		OnEnd();
 	
 		return 0;
 	}
+
+	void Application::OnBegin()
+	{
+
+	}
+
+	void Application::OnUpdate(float _dt)
+	{
+
+	}
+
+	void Application::OnRender()
+	{
+
+	}
+
+	void Application::OnEnd()
+	{
+
+	}
+
 }

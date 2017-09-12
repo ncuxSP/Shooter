@@ -190,14 +190,14 @@ namespace Engine
 			return length;
 		}
 
-		inline float length() const
+		inline float Length() const
 		{
 			return sqrtf(static_cast<float>(LengthSquare()));
 		}
 
 		inline void Normalize()
 		{
-			set_length(static_cast<Type>(1));
+			SetLength(static_cast<Type>(1));
 		}
 
 		inline MathVector GetNormalized() const
@@ -210,7 +210,7 @@ namespace Engine
 
 		inline void SetLength(float _length)
 		{
-			float magnitude = length() / _length;
+			float magnitude = Length() / _length;
 
 			if (fabs(magnitude) < std::numeric_limits<float>::epsilon())
 			{
@@ -495,58 +495,6 @@ namespace Engine
 
 			return false;
 		}
-
-		inline bool operator <= (const MathVector &_vector) const
-		{
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				if (MathVectorBase<Type, Size>::v[i] > _vector.v[i])
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		inline bool operator >= (const MathVector &_vector) const
-		{
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				if (MathVectorBase<Type, Size>::v[i] < _vector.v[i])
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		inline bool operator < (const MathVector &_vector) const
-		{
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				if (MathVectorBase<Type, Size>::v[i] >= _vector.v[i])
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		inline bool operator > (const MathVector &_vector) const
-		{
-			for (uint32_t i = 0; i < Size; ++i)
-			{
-				if (MathVectorBase<Type, Size>::v[i] <= _vector.v[i])
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
 	};
 
 	template<typename Type, uint32_t Size>
@@ -580,20 +528,8 @@ namespace Engine
 		return (DotProduct((_a - _point), (_b - _point)) <= 0);
 	}
 
-	typedef MathVector<float, 2>	vec2f;
-	typedef MathVector<float, 3>	vec3f;
-
-	typedef MathVector<int32_t, 2>	vec2i;
-	typedef MathVector<int32_t, 3>	vec3i;
-
-	typedef MathVector<uint32_t, 2>	vec2ui;
-	typedef MathVector<uint32_t, 3>	vec3ui;
-	typedef MathVector<uint32_t, 4>	vec4ui;
-
-	typedef MathVector<uint8_t, 4>	vec4ui8;
-
-	using Size = vec2ui;
-	using Point = vec2i;
-	using Vector = vec2f;
-	using Color = vec4ui8;
+	using Size = MathVector<uint32_t, 2>;
+	using Point = MathVector<int32_t, 2>;
+	using Vector = MathVector<float, 2>;
+	using Color = MathVector<uint8_t, 4>;
 }

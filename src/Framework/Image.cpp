@@ -1,8 +1,5 @@
 #include "stdafx.h"
 
-#include "Image.h"
-
-
 namespace Engine
 {	
 	Image::Image(const string &_filename)

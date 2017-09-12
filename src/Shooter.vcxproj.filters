@@ -8,6 +8,9 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{cf077d6d-5892-4b66-849e-0bb1b284a0d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{e0fc57db-b217-4ca0-bd6b-39dfc14a0431}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -26,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="Framework\World.cpp">
       <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +57,9 @@
     </ClInclude>
     <ClInclude Include="Framework\Entities.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Game.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

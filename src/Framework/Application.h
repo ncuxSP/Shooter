@@ -6,17 +6,23 @@ namespace Engine
 	{
 	public:
 		Application(const string &_name, const Size &_size);
-		~Application();
+		virtual ~Application();
 	
 		int Run();
-	
-	private:
+
+		virtual void OnBegin();
+		virtual void OnUpdate(float _dt);
+		virtual void OnRender();
+		virtual void OnEnd();
+
+	protected:
 		class Graphics *graphics;
 		class Input *input;
-		class SDL_Window *window;
-		class SDL_Renderer *renderer;
-		bool is_failed;
 		Size size;
+
+	private:
+		SDL_Window *window;
+		bool is_failed;
 	};
 }
 
