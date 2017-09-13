@@ -10,6 +10,7 @@ namespace Engine
 		~Image();
 
 		void FillRect(const Point &_position, const Size &_size, const Color &_color);
+		const Size &GetSize() const;
 
 	private:
 		friend class Graphics;
@@ -24,5 +25,10 @@ namespace Engine
 
 		bool is_inited;
 	};
+
+	inline const Size &Image::GetSize() const
+	{
+		return size;
+	}
 }
 

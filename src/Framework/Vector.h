@@ -312,7 +312,7 @@ namespace Engine
 
 			for (uint32_t i = 0; i < Size; ++i)
 			{
-				new_vector.v[i] = MathVectorBase<Type, Size>::v[i]  *_vector.v[i];
+				new_vector.v[i] = MathVectorBase<Type, Size>::v[i] * _vector.v[i];
 			}
 
 			return new_vector;
