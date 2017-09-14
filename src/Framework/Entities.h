@@ -89,9 +89,10 @@ namespace Engine
 	class Entity
 	{
 	public:
-		Entity(World *_world, uint32_t _id)
-			: world(_world)
-			, id(_id)
+		Entity(World *_world, uint32_t _id, const string &_tag)
+			:	world(_world)
+			,	id(_id)
+			,	tag(_tag)
 		{
 
 		}
@@ -120,14 +121,7 @@ namespace Engine
 			return false;
 		}
 
-		inline void RemoveAll()
-		{
-			for (auto pair : components)
-			{
-				delete pair.second;
-			}
-			components.clear();
-		}
+		void RemoveAll();
 		
 		template <typename T>
 		bool Has() const
@@ -142,15 +136,17 @@ namespace Engine
 			return Has<T1>() && Has<T2, Types...>();
 		}
 
-		uint32_t GetId() const
-		{
-			return id;
-		}
+		uint32_t GetId() const;
+
+		const string &GetTag() const;
+
+		bool Is(const string &_tag) const;
 
 	private:
 		unordered_map<Internal::TypeIndex, Internal::BaseComponent *> components;
 		World *world;
 		uint32_t id;
+		string tag;
 	};
 
 	namespace Events
@@ -181,6 +177,16 @@ namespace Engine
 
 		virtual void Receive(World *_world, const T &_event) = 0;
 	};
+
+
+	inline void Entity::RemoveAll()
+	{
+		for (auto pair : components)
+		{
+			delete pair.second;
+		}
+		components.clear();
+	}
 
 	template <typename T, typename... Args>
 	ComponentPtr<T> Entity::Assign(Args&&... _args)
@@ -219,6 +225,21 @@ namespace Engine
 		{
 			return ComponentPtr<T>();
 		}
+	}
+
+	inline uint32_t Entity::GetId() const
+	{
+		return id;
+	}
+
+	inline const string & Entity::GetTag() const
+	{
+		return tag;
+	}
+
+	inline bool Entity::Is(const string &_tag) const
+	{
+		return tag == _tag;
 	}
 
 }

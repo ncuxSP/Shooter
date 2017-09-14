@@ -45,6 +45,7 @@ struct Controller
 	Vector axis;
 	float rotation;
 	bool is_shooting;
+	float shoot_delay;
 };
 
 struct PhysicBody
@@ -62,31 +63,7 @@ struct PhysicBody
 		,	mass(_mass)
 		,	velocity(0.f)
 	{
-		radius = sqrt(DotProduct(_tr.size, _tr.size)) / 2.f;
-		
-		vertices.reserve(4);
-		vertices.push_back(_tr.position);
-		vertices.push_back(_tr.position + Point(_tr.size.x, 0));
-		vertices.push_back(_tr.position + _tr.size);
-		vertices.push_back(_tr.position + Point(0, _tr.size.y));
-		
-		CalculateVertices(_tr);
-	}
-
-	void CalculateVertices(const Translation &_tr)
-	{
-		auto pi = acos(-1);
-		auto rad = _tr.angle * pi / 180.f;
-		auto center = _tr.position + _tr.size / 2.f;
-		auto diff = _tr.position - vertices[0];
-
-		for (auto &p : vertices)
-		{
-			p += diff;
-			p -= center;
-			p = Point(p.x * cos(rad) - p.y * sin(rad), p.x * sin(rad) + p.y * cos(rad));
-			p += center;
-		}
+		radius = _tr.size.Length() / 2.f;
 	}
 	
 	bool is_circle;
@@ -94,7 +71,6 @@ struct PhysicBody
 	float mass;
 
 	Vector velocity;
-	vector<Point> vertices;
 };
 
 struct OnRenderBegin
@@ -202,20 +178,23 @@ public:
 		{
 			_tr->angle += _ct->rotation * 40.f * _dt;
 
-			auto pi = acos(-1);
+			auto pi = acosf(-1);
 			auto rad = _tr->angle * pi / 180.f;
-			Vector direction(sin(rad), -cos(rad));
-			direction *= 80.f;
+			Vector direction(sinf(rad), -cosf(rad));
 
 			_pb->velocity = direction * _ct->axis.y + Vector(-direction.y, direction.x) * _ct->axis.x;
+			_pb->velocity *= 80.f;
 
-			if (_ct->is_shooting)
+			_ct->shoot_delay -= _dt;
+
+			if (_ct->is_shooting && _ct->shoot_delay < 0.f)
 			{
-				auto bullet = _world->Create();
+				auto bullet = _world->Create("Bullet");
 				auto vs = bullet->Assign<Visual>(new Image("bullet.bmp"));
-				bullet->Assign<Translation>(_tr->position + direction, vs->image->GetSize(), 0.f);
+				bullet->Assign<Translation>(_tr->position + direction * _pb->radius, vs->image->GetSize(), 0.f);
 				auto pb = bullet->Assign<PhysicBody>(1.f, 6.f);
-				pb->velocity = direction * 5.f;
+				pb->velocity = direction * 300.f;
+				_ct->shoot_delay = 0.1f;
 			}
 		});
 
@@ -234,6 +213,10 @@ public:
 class CollisionSystem : public EntitySystem
 {
 public:
+	CollisionSystem(const Size &_size)
+		:	size(_size)
+	{}
+
 	virtual ~CollisionSystem() override {}
 
 	virtual void Configure(World* _world) override
@@ -264,7 +247,6 @@ public:
 
 				if ((tr->position - _tr->position).Length() <= pb->radius + _pb->radius)
 				{
-					
 					if (pb->is_circle && _pb->is_circle)
 					{
 						auto rv = pb->velocity - _pb->velocity;
@@ -296,9 +278,7 @@ public:
 							normal = -normal;
 						}
 						tr->position -= normal;
-						pb->CalculateVertices(tr.Get());
 						_tr->position += normal;
-						pb->CalculateVertices(_tr.Get());
 
 						continue;
 					}
@@ -361,17 +341,43 @@ public:
 				}
 			}
 		});
+
+		_world->Each<Translation>([&](Entity *_entity, ComponentPtr<Translation> _tr) -> void 
+		{
+			if (_tr->position.x < 0.f || _tr->position.x > size.w || _tr->position.y < 0.f || _tr->position.y > size.h)
+			{
+				if (_entity->Is("Bullet"))
+				{
+					_world->Destroy(_entity);
+				}
+				else
+				{
+					auto normal = _tr->position - size / 2.f;
+					if (abs(normal.x) < size.w / 2.f)
+					{
+						normal.x = 0.f;
+					}
+					if (abs(normal.y) < size.h / 2.f)
+					{
+						normal.y = 0.f;
+					}
+					auto diff = normal.GetNormalized() * size / 2.f - normal;
+					_tr->position += diff * 2.f;
+				}
+			}
+		});
 	}
 
 	Vector Rotate(const Vector &_v, float _angle)
 	{
-		auto pi = acos(-1);
+		auto pi = acosf(-1);
 		auto rad = -_angle * pi / 180.f;
-		return Vector(_v.x * cos(rad) - _v.y * sin(rad), _v.x * sin(rad) + _v.y * cos(rad));
+		return Vector(_v.x * cosf(rad) - _v.y * sinf(rad), _v.x * sinf(rad) + _v.y * cosf(rad));
 	}
 
 private:
 	Graphics *graphics;
+	Size size;
 };
 
 
@@ -383,49 +389,39 @@ void Game::OnBegin()
 	graphics->SetColor(Color(255));
 
 	world = make_unique<World>();
-	world->RegisterSystem(new CollisionSystem());
+	world->RegisterSystem(new CollisionSystem(size));
 	world->RegisterSystem(new PhysicSystem());
 	world->RegisterSystem(new ControllerSystem(input));
-/*
-	Random rnd(6, 16);
+
+	Random rnd;
 
 	for (uint32_t i = 0; i < 7; ++i)
 	{
 		auto box = world->Create();
 
-		Size size(rnd.Next() * 16, rnd.Next() * 16);
+		Size size(rnd.Get(4, 16) * 16, rnd.Get(4, 16) * 16);
 		auto image = new Image(size, Color(0, 255));
 		image->FillRect(Point(4), size - Size(8), Color(255, 0));
 		box->Assign<Visual>(image);
 
-		Point pos(rnd.Next() * 64, rnd.Next() * 48);
-		float angle = (rnd.Next() - 6)/ 10.f * 360.f;
+		Point pos(rnd.Get(0, 16) * 64, rnd.Get(0, 16) * 48);
+		float angle = rnd.GetFromZero(10.f) * 36.f;
 		auto tr = box->Assign<Translation>(pos, size, angle);
 
 		box->Assign<PhysicBody>(1000000.f, tr.Get());
 	}
-	*/
 
-	auto box = world->Create();
-	Size size(100, 300);
-	auto image = new Image(size, Color(0, 255));
-	image->FillRect(Point(4), size - Size(8), Color(255, 0));
-	box->Assign<Visual>(image);
-
-	Point pos(300);
-	float angle = (3) / 10.f * 360.f;
-	auto tr = box->Assign<Translation>(pos, size, angle);
-
-	box->Assign<PhysicBody>(1000000.f, tr.Get());
-
-
-
-
-	auto hero = world->Create();
-	auto visual = hero->Assign<Visual>(new Image("hero.bmp"));
-	hero->Assign<Translation>(Point(500, 500), visual->image->GetSize(), 0.f);
+	auto hero = world->Create("Hero");
+	auto h = hero->Assign<Visual>(new Image("hero.bmp"));
+	hero->Assign<Translation>(Point(640, 700), h->image->GetSize(), 0.f);
 	hero->Assign<Controller>(Controller::Type::Player);
 	hero->Assign<PhysicBody>(10.f, 40.f);
+
+	auto enemy = world->Create("Enemy");
+	auto e = enemy->Assign<Visual>(new Image("hero.bmp"));
+	enemy->Assign<Translation>(Point(640, 100), e->image->GetSize(), 180.f);
+	enemy->Assign<Controller>(Controller::Type::Player);
+	enemy->Assign<PhysicBody>(10.f, 40.f);
 }
 
 void Game::OnUpdate(float _dt)
@@ -448,4 +444,9 @@ void Game::OnRender()
 void Game::OnEnd()
 {
 	Application::OnEnd();
+}
+
+void Game::SpawnBlocks()
+{
+
 }

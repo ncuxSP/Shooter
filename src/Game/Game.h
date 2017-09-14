@@ -12,5 +12,8 @@ public:
 	virtual void OnEnd() override;
 
 private:
+	void SpawnBlocks();
+
+private:
 	unique_ptr<World> world;
 };

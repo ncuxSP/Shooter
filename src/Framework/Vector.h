@@ -528,7 +528,7 @@ namespace Engine
 		return (DotProduct((_a - _point), (_b - _point)) <= 0);
 	}
 
-	using Size = MathVector<uint32_t, 2>;
+	using Size = MathVector<int32_t, 2>;
 	using Point = MathVector<int32_t, 2>;
 	using Vector = MathVector<float, 2>;
 	using Color = MathVector<uint8_t, 4>;

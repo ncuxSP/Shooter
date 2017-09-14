@@ -8,7 +8,7 @@ namespace Engine
 		World();
 		~World();
 
-		Entity *Create();
+		Entity *Create(const string &_tag = "");
 
 		void Destroy(Entity *_entity);
 
@@ -34,11 +34,14 @@ namespace Engine
 		template <typename... Types>
 		void Each(typename common_type_t<function<void(Entity *, ComponentPtr<Types>...)>> _call_back);
 
+		void EachTag(const string &_tag, function<void(Entity *)> _call_back);
+
 		void All(function<void(Entity *)> _call_back);
 
 	private:
 		vector<Entity *> entities;
 		vector<Entity *> new_entities;
+		vector<Entity *> removed_entities;
 		vector<EntitySystem *> systems;
 		unordered_map<Internal::TypeIndex, vector<Internal::BaseSubscriber *>> subscribers;
 		uint32_t last_id;

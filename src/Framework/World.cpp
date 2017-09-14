@@ -22,10 +22,10 @@ namespace Engine
 		}
 	}
 	
-	Entity *World::Create()
+	Entity *World::Create(const string &_tag /*= ""*/)
 	{
 		++last_id;
-		auto entity = new Entity(this, last_id);
+		auto entity = new Entity(this, last_id, _tag);
 		new_entities.push_back(entity);
 
 		Emit<Events::OnEntityCreated>({ entity });
@@ -35,11 +35,8 @@ namespace Engine
 	
 	void World::Destroy(Entity *_entity)
 	{
-		entities.erase(remove(entities.begin(), entities.end(), _entity), entities.end());
+		removed_entities.push_back(_entity);
 		Emit<Events::OnEntityRemoved>({ _entity });
-
-		delete _entity;
-		_entity = nullptr;
 	}
 	
 	void World::Update(float _dt)
@@ -47,6 +44,17 @@ namespace Engine
 		for (auto *system : systems)
 		{
 			system->Update(this, _dt);
+		}
+
+		if (removed_entities.size() > 0)
+		{
+			for (auto *e : removed_entities)
+			{
+				entities.erase(remove(entities.begin(), entities.end(), e), entities.end());
+				delete e;
+				e = nullptr;
+			}
+			removed_entities.clear();
 		}
 
 		if (new_entities.size() > 0)
@@ -97,6 +105,17 @@ namespace Engine
 		
 	}
 	
+	void World::EachTag(const string &_tag, function<void(Entity *)> _call_back)
+	{
+		for (auto *entity : entities)
+		{
+			if (entity->Is(_tag))
+			{
+				_call_back(entity);
+			}
+		}
+	}
+
 	void World::All(function<void(Entity *)> _call_back)
 	{
 		for (auto *entity : entities)

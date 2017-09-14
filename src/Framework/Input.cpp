@@ -57,7 +57,7 @@ namespace Engine
 		{
 			return false;
 		}
-		return keyboard[_key];
+		return keyboard[_key] > 0;
 	}
 
 	bool Input::IsKeyDown(uint32_t _key) const
