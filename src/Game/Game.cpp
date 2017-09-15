@@ -4,6 +4,7 @@
 
 Game::Game(const string &_name, const Size &_size)
 	:	Application(_name, _size)
+	,	is_game_started(false)
 {
 
 }
@@ -277,8 +278,11 @@ public:
 						{
 							normal = -normal;
 						}
-						tr->position -= normal;
-						_tr->position += normal;
+
+						normal *= 1.f / (pb->mass + _pb->mass);
+
+						tr->position -= normal * _pb->mass;
+						_tr->position += normal * pb->mass;
 
 						continue;
 					}
@@ -288,6 +292,11 @@ public:
 					}
 					else if (pb->is_circle && !_pb->is_circle)
 					{
+						if (_entity->Is("SpawnHero") || _entity->Is("SpawnEnemy"))
+						{
+							continue;
+						}
+
 						auto circle_pos = Rotate(tr->position - _tr->position, _tr->angle);
 						auto closest_point = circle_pos;
 
@@ -393,35 +402,7 @@ void Game::OnBegin()
 	world->RegisterSystem(new PhysicSystem());
 	world->RegisterSystem(new ControllerSystem(input));
 
-	Random rnd;
-
-	for (uint32_t i = 0; i < 7; ++i)
-	{
-		auto box = world->Create();
-
-		Size size(rnd.Get(4, 16) * 16, rnd.Get(4, 16) * 16);
-		auto image = new Image(size, Color(0, 255));
-		image->FillRect(Point(4), size - Size(8), Color(255, 0));
-		box->Assign<Visual>(image);
-
-		Point pos(rnd.Get(0, 16) * 64, rnd.Get(0, 16) * 48);
-		float angle = rnd.GetFromZero(10.f) * 36.f;
-		auto tr = box->Assign<Translation>(pos, size, angle);
-
-		box->Assign<PhysicBody>(1000000.f, tr.Get());
-	}
-
-	auto hero = world->Create("Hero");
-	auto h = hero->Assign<Visual>(new Image("hero.bmp"));
-	hero->Assign<Translation>(Point(640, 700), h->image->GetSize(), 0.f);
-	hero->Assign<Controller>(Controller::Type::Player);
-	hero->Assign<PhysicBody>(10.f, 40.f);
-
-	auto enemy = world->Create("Enemy");
-	auto e = enemy->Assign<Visual>(new Image("hero.bmp"));
-	enemy->Assign<Translation>(Point(640, 100), e->image->GetSize(), 180.f);
-	enemy->Assign<Controller>(Controller::Type::Player);
-	enemy->Assign<PhysicBody>(10.f, 40.f);
+	SpawnBlocks(8);
 }
 
 void Game::OnUpdate(float _dt)
@@ -429,6 +410,13 @@ void Game::OnUpdate(float _dt)
 	Application::OnUpdate(_dt);
 
 	world->Update(_dt);
+
+	if (!is_game_started && spawn_characters_delay < 0.f)
+	{
+		SpawnCharacters();
+		is_game_started = true;
+	}
+	spawn_characters_delay -= _dt;
 }
 
 void Game::OnRender()
@@ -446,7 +434,57 @@ void Game::OnEnd()
 	Application::OnEnd();
 }
 
-void Game::SpawnBlocks()
+void Game::SpawnBlocks(uint32_t _count)
 {
+	Random rnd;
+
+	for (uint32_t i = 0; i < _count; ++i)
+	{
+		auto box = world->Create();
+
+		Size size(rnd.Get(4, 16) * 16, rnd.Get(4, 16) * 16);
+		auto image = new Image(size, Color(0, 255));
+		image->FillRect(Point(4), size - Size(8), Color(255, 0));
+		box->Assign<Visual>(image);
+
+		Point pos(rnd.Get(15, 65) * 16, rnd.Get(15, 35) * 16);
+		float angle = rnd.GetFromZero(36) * 10.f;
+		auto tr = box->Assign<Translation>(pos, size, angle);
+
+		box->Assign<PhysicBody>(10.f, tr.Get());
+	}
+
+	auto hero_spawn = world->Create("SpawnHero");
+	Point position(640, 700);
+	auto tr = hero_spawn->Assign<Translation>(position, Size(128), 0.f);
+	hero_spawn->Assign<PhysicBody>(1000000.f, tr.Get());
+
+	auto enemy_spawn = world->Create("SpawnEnemy");
+	position = Point(640, 100);
+	tr = enemy_spawn->Assign<Translation>(position, Size(128), 0.f);
+	enemy_spawn->Assign<PhysicBody>(1000000.f, tr.Get());
+
+	spawn_characters_delay = 0.5f;
+}
+
+void Game::SpawnCharacters()
+{
+	world->EachTag("SpawnHero", [&](Entity *_entity) -> void
+	{
+		auto hero = world->Create("Hero");
+		auto visual = hero->Assign<Visual>(new Image("hero.bmp"));
+		hero->Assign<Translation>(_entity->Get<Translation>()->position, visual->image->GetSize(), 0.f);
+		hero->Assign<Controller>(Controller::Type::Player);
+		hero->Assign<PhysicBody>(10.f, 40.f);
+	});
+
+	world->EachTag("SpawnEnemy", [&](Entity *_entity) -> void
+	{
+		auto enemy = world->Create("Enemy");
+		auto visual = enemy->Assign<Visual>(new Image("hero.bmp"));
+		enemy->Assign<Translation>(_entity->Get<Translation>()->position, visual->image->GetSize(), 180.f);
+		enemy->Assign<Controller>(Controller::Type::Player);
+		enemy->Assign<PhysicBody>(10.f, 40.f);
+	});
 
 }
