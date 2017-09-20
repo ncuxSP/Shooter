@@ -17,10 +17,11 @@ namespace Engine
 	
 	Graphics::~Graphics()
 	{
+		ImageCache::GetInstance().Flush();
 		SDL_DestroyRenderer(renderer);
 	}
 
-	Image * Graphics::NewImage(const string &_file_name)
+	Image *Graphics::NewImage(const string &_file_name)
 	{
 		return new Image(_file_name);
 	}
@@ -37,7 +38,7 @@ namespace Engine
 
 	void Graphics::DrawImage(Image *_img, const Point &_position)
 	{
-		_img->Init(renderer);
+		_img->RenderTexture(renderer);
 
 		SDL_Rect src{ 0, 0, _img->size.w, _img->size.h };
 		SDL_Rect dst{ _position.x, _position.y, _img->size.w, _img->size.h };
@@ -47,7 +48,7 @@ namespace Engine
 
 	void Graphics::DrawImage(Image *_img, const Point &_position, float _angle)
 	{
-		_img->Init(renderer);
+		_img->RenderTexture(renderer);
 
 		SDL_Rect src{ 0, 0, _img->size.w, _img->size.h };
 		SDL_Rect dst{ _position.x, _position.y, _img->size.w, _img->size.h };

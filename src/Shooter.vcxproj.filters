@@ -11,6 +11,9 @@
     <Filter Include="Game">
       <UniqueIdentifier>{e0fc57db-b217-4ca0-bd6b-39dfc14a0431}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\BT">
+      <UniqueIdentifier>{2f4991ca-5699-4332-91fb-383748e090c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -33,7 +36,16 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Translation.cpp">
+    <ClCompile Include="Framework\BehaviorTree.cpp">
+      <Filter>Framework\BT</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Composites.cpp">
+      <Filter>Framework\BT</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Decorators.cpp">
+      <Filter>Framework\BT</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Physics.cpp">
       <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,11 +76,23 @@
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Translation.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\Random.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\BehaviorTree.h">
+      <Filter>Framework\BT</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Composites.h">
+      <Filter>Framework\BT</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Decorators.h">
+      <Filter>Framework\BT</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Physics.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

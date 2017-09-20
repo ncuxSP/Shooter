@@ -14,11 +14,13 @@
 #include <memory>
 #include <random>
 #include <complex>
+#include <stack>
 
 using namespace std;
 
 #include "SDL.h"
 
+#include "Framework/BehaviorTree.h"
 #include "Framework/Vector.h"
 #include "Framework/Image.h"
 #include "Framework/Graphics.h"

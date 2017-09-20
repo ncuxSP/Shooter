@@ -24,6 +24,19 @@ namespace Engine
 	
 		graphics = new Graphics(window, size);
 		input = new Input();
+
+		int img_flags = IMG_INIT_PNG;
+		if (!(IMG_Init(img_flags) & img_flags))
+		{
+			cout << " Failed to initialize SDL_image : " << IMG_GetError() << endl;
+			is_failed = true;
+		}
+
+		if (TTF_Init() == -1)
+		{
+			cout << " Failed to initialize SDL_image : " << IMG_GetError() << endl;
+			is_failed = true;
+		}
 	}
 	
 	Application::~Application()
@@ -31,6 +44,9 @@ namespace Engine
 		delete input;
 		delete graphics;
 		SDL_DestroyWindow(window);
+
+		IMG_Quit();
+		TTF_Quit();
 		SDL_Quit();
 	}
 	
@@ -38,6 +54,7 @@ namespace Engine
 	{
 		if (is_failed)
 		{
+			system("Pause");
 			return 1;
 		}
 
