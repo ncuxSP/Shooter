@@ -12,8 +12,16 @@ ControllerSystem::ControllerSystem(Input *_input)
 
 void ControllerSystem::Configure(World *_world)
 {
+	_world->Subscribe<EndRound>(this);
+
 	ai = BTBuilder()
 		.Selector("select behavior")
+			.Sequence("retreat")
+				.Condition("is too dangerous", [&]() -> bool { return BulletsCount() >= 4; })
+				.Action("hiding", bind(&ControllerSystem::Hiding, this))
+				.Action("aiming", bind(&ControllerSystem::AimingToLocation, this))
+				.Action("moving", bind(&ControllerSystem::Moving, this))
+			.End()
 			.Sequence("shoot if can")
 				.Condition("if seing target", bind(&ControllerSystem::IsCanSeeTarget, this))
 				.Selector("aiming")
@@ -29,19 +37,19 @@ void ControllerSystem::Configure(World *_world)
 					.End()
 					.Action("find new location", bind(&ControllerSystem::FindNewLocation, this))
 				.End()
-				.Action("aiming", bind(&ControllerSystem::Aiming, this))
+				.Action("aiming", bind(&ControllerSystem::AimingToLocation, this))
 				.Action("moving", bind(&ControllerSystem::Moving, this))
 			.End()
 		.End()
 		.Build();
 
 	blackboard.world = _world;
-	blackboard.location_found = false;
+	FindNewLocation();
 }
 
 void ControllerSystem::UnConfigure(World *_world)
 {
-
+	_world->UnSubscribeAll(this);
 }
 
 void ControllerSystem::Update(World *_world, float _dt)
@@ -111,11 +119,16 @@ void ControllerSystem::Update(World *_world, float _dt)
 	});
 }
 
+void ControllerSystem::Receive(World *_world, const EndRound &_event)
+{
+	FindNewLocation();
+}
+
 bool ControllerSystem::IsInTargetLocation() const
 {
 	if (!blackboard.location_found)
 	{
-		return true;
+		return false;
 	}
 
 	auto tr = blackboard.me->Get<Translation>();
@@ -129,7 +142,7 @@ Engine::BTStatus ControllerSystem::Moving()
 	auto ct = blackboard.me->Get<Controller>();
 	ct->axis.y = 1.f;
 
-	if (IsInTargetLocation() || IsCanSeeTarget())
+	if (IsInTargetLocation() || (IsCanSeeTarget() && BulletsCount() < 4))
 	{
 		ct->axis.y = 0.f;
 		return BTStatus::Success;
@@ -140,7 +153,15 @@ Engine::BTStatus ControllerSystem::Moving()
 
 Engine::BTStatus ControllerSystem::FindNewLocation()
 {
-	blackboard.location = blackboard.target;
+	Random rnd;
+	Vector location;
+	do
+	{
+		location = Vector(rnd.GetFromZero(1280.f), rnd.GetFromZero(800.f));
+	} 
+	while (!IsCanSeeTargetFrom(location));
+
+	blackboard.location = location;
 	blackboard.location_found = true;
 
 	return BTStatus::Success;
@@ -180,7 +201,30 @@ bool ControllerSystem::IsAimed() const
 	return Math::IntersectRayCircle(tr->position, direction, blackboard.target, radius);
 }
 
+uint32_t ControllerSystem::BulletsCount()
+{
+	uint32_t result = 0;
+	blackboard.world->All([&](Entity *_entity) -> void
+	{
+		if (_entity->Is("Bullet"))
+		{
+			++result;
+		}
+	});
+	return result;
+}
+
 Engine::BTStatus ControllerSystem::Aiming()
+{
+	return AimingTo(blackboard.target);
+}
+
+Engine::BTStatus ControllerSystem::AimingToLocation()
+{
+	return AimingTo(blackboard.location);
+}
+
+Engine::BTStatus ControllerSystem::AimingTo(const Point &_position)
 {
 	auto ct = blackboard.me->Get<Controller>();
 	auto tr = blackboard.me->Get<Translation>();
@@ -189,7 +233,7 @@ Engine::BTStatus ControllerSystem::Aiming()
 	auto rad = tr->angle * pi / 180.f;
 	Vector direction(cosf(rad), sinf(rad));
 
-	ct->rotation = Math::Sign(Math::DotProduct(direction, blackboard.target - tr->position));
+	ct->rotation = Math::Sign(Math::DotProduct(direction, -tr->position + _position ));
 
 	if (IsAimed())
 	{
@@ -200,17 +244,28 @@ Engine::BTStatus ControllerSystem::Aiming()
 	return BTStatus::Running;
 }
 
-Engine::BTStatus ControllerSystem::AimingTo(const Point &_position)
-{
-
-}
-
 Engine::BTStatus ControllerSystem::Shooting()
 {
 	auto ct = blackboard.me->Get<Controller>();
 	ct->is_shooting = true;
 	ct->axis.y = 0.f;
 	ct->rotation = 0.f;
+
+	return BTStatus::Success;
+}
+
+Engine::BTStatus ControllerSystem::Hiding()
+{
+	Random rnd;
+	Vector location;
+	do
+	{
+		location = Vector(rnd.GetFromZero(1280.f), rnd.GetFromZero(800.f));
+	}
+	while (IsCanSeeTargetFrom(location));
+
+	blackboard.location = location;
+	blackboard.location_found = true;
 
 	return BTStatus::Success;
 }

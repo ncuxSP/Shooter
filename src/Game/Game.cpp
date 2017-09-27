@@ -27,7 +27,7 @@ void Game::OnBegin()
 	world->RegisterSystem(new PhysicSystem());
 	world->RegisterSystem(new ControllerSystem(input));
 
-	world->Subscribe(this);
+	world->Subscribe<EndRound>(this);
 
 	SpawnBlocks(8);
 
@@ -75,18 +75,18 @@ void Game::OnEnd()
 
 	delete scores.text;
 
-	world->UnSubscribe(this);
+	world->UnSubscribeAll(this);
 }
 
 void Game::Receive(World *_world, const EndRound &_event)
 {
 	if (_event.loser->Is("Hero"))
 	{
-		++scores.hero;
+		++scores.enemy;
 	}
 	else
 	{
-		++scores.enemy;
+		++scores.hero;
 	}
 
 	scores.text->SetText(to_string(scores.hero) + ":" + to_string(scores.enemy));

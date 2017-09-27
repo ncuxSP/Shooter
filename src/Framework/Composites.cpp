@@ -87,26 +87,36 @@ namespace Engine
 		{
 			cout << name << endl;
 
-			for (auto i = last; i < children.size(); ++i)
+			for (auto &child : children)
 			{
-				auto &child = children[i];
-
 				auto status = child->Update();
 
 				if (status != Status::Success)
 				{
-					if (status == Status::Running)
-					{
-						last = i;
-					}
-					else
-					{
-						last = 0;
-					}
 					return status;
 				}
 			}
-			last = 0;
+// 
+// 			for (auto i = last; i < children.size(); ++i)
+// 			{
+// 				auto &child = children[i];
+// 
+// 				auto status = child->Update();
+// 
+// 				if (status != Status::Success)
+// 				{
+// 					if (status == Status::Running)
+// 					{
+// 						last = i;
+// 					}
+// 					else
+// 					{
+// 						last = 0;
+// 					}
+// 					return status;
+// 				}
+// 			}
+// 			last = 0;
 
 			return Status::Success;
 		}
