@@ -28,6 +28,8 @@ namespace Engine
 
 		Status Leaf::Update()
 		{
+			cout << name << endl;
+
 			return action();
 		}
 

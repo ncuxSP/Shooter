@@ -41,6 +41,10 @@ namespace Engine
 		{
 			SDL_FreeSurface(surface);
 		}
+		if (texture != nullptr)
+		{
+			SDL_DestroyTexture(texture);
+		}
 	}
 
 	void Image::FillRect(const Point &_position, const Size &_size, const Color &_color)
@@ -59,6 +63,10 @@ namespace Engine
 	{
 		if (!is_inited)
 		{
+			if (texture != nullptr)
+			{
+				SDL_DestroyTexture(texture);
+			}
 			texture = SDL_CreateTextureFromSurface(_renderer, surface);
 			if (texture == nullptr)
 			{

@@ -20,15 +20,15 @@ namespace Engine
 
 		void UnRegisterSystem(EntitySystem *_system);
 		
-		template <typename T>
+		template <class T>
 		void Subscribe(EventSubscriber<T> *_subscriber);
 
-		template <typename T>
+		template <class T>
 		void UnSubscribe(EventSubscriber<T> *_subscriber);
 
 		void UnSubscribeAll(Internal::BaseSubscriber *_subscriber);
 
-		template <typename T>
+		template <class T>
 		void Emit(const T &_event);
 
 		template <typename... Types>
@@ -38,6 +38,8 @@ namespace Engine
 
 		void All(function<void(Entity *)> _call_back);
 
+		Entity *GetByTag(const string &_tag) const;
+
 	private:
 		vector<Entity *> entities;
 		vector<Entity *> new_entities;
@@ -45,9 +47,10 @@ namespace Engine
 		vector<EntitySystem *> systems;
 		unordered_map<Internal::TypeIndex, vector<Internal::BaseSubscriber *>> subscribers;
 		uint32_t last_id;
+		bool start_reset;
 	};
 
-	template <typename T>
+	template <class T>
 	void World::Subscribe(EventSubscriber<T> *_subscriber)
 	{
 		auto index = Internal::GetTypeIndex<T>();
@@ -64,7 +67,7 @@ namespace Engine
 		}
 	}
 
-	template <typename T>
+	template <class T>
 	void World::UnSubscribe(EventSubscriber<T> *_subscriber)
 	{
 		auto index = Internal::GetTypeIndex<T>();
@@ -79,7 +82,7 @@ namespace Engine
 		}
 	}
 
-	template <typename T>
+	template <class T>
 	void World::Emit(const T &_event)
 	{
 		auto index = Internal::GetTypeIndex<T>();

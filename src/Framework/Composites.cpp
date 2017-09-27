@@ -9,7 +9,7 @@ namespace Engine
 	{
 
 		Composite::Composite(const string &_name)
-			:	Parrent(_name)
+			: Parrent(_name)
 		{
 
 		}
@@ -27,6 +27,8 @@ namespace Engine
 
 		Status Parallel::Update()
 		{
+			cout << name << endl;
+
 			bool success = true;
 			bool failure = true;
 
@@ -53,12 +55,15 @@ namespace Engine
 
 		Selector::Selector(const string &_name)
 			: Composite(_name)
+			, last(0)
 		{
 
 		}
 
 		Status Selector::Update()
 		{
+			cout << name << endl;
+
 			for (auto &child : children)
 			{
 				auto status = child->Update();
@@ -68,27 +73,40 @@ namespace Engine
 					return status;
 				}
 			}
-
 			return Status::Failure;
 		}
 
 		Sequence::Sequence(const string &_name)
 			: Composite(_name)
+			, last(0)
 		{
 
 		}
 
 		Status Sequence::Update()
 		{
-			for (auto &child : children)
+			cout << name << endl;
+
+			for (auto i = last; i < children.size(); ++i)
 			{
+				auto &child = children[i];
+
 				auto status = child->Update();
 
 				if (status != Status::Success)
 				{
+					if (status == Status::Running)
+					{
+						last = i;
+					}
+					else
+					{
+						last = 0;
+					}
 					return status;
 				}
 			}
+			last = 0;
 
 			return Status::Success;
 		}

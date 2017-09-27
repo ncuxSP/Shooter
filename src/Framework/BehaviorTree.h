@@ -74,4 +74,8 @@ namespace Engine
 			stack<Parrent *> parrents;
 		};
 	}
+
+	using BTree = BehaviorTree::Node::Ptr;
+	using BTStatus = BehaviorTree::Status;
+	using BTBuilder = BehaviorTree::Builder;
 }

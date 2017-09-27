@@ -14,6 +14,11 @@ struct Translation
 	Size size;
 	Vector position;
 	float angle;
+
+	Math::Rectangle ToRectangle() const
+	{
+		return { position, size, angle };
+	}
 };
 
 struct PhysicBody
@@ -56,13 +61,12 @@ struct Text
 
 struct Controller
 {
-	enum class Type : uint8_t
-	{
-		Player,
-		AI
-	} type;
-
-	Controller(Type _type) : type(_type), axis(0.f), rotation(0.f), is_shooting(false), shoot_delay(0.f) {}
+	Controller() 
+		: axis(0.f)
+		, rotation(0.f)
+		, is_shooting(false)
+		, shoot_delay(0.f)
+	{}
 
 	Vector axis;
 	float rotation;
@@ -74,5 +78,14 @@ struct Controller
 
 struct OnRenderBegin
 {
-	OnRenderBegin() {};
+	OnRenderBegin() = default;
+};
+
+struct EndRound
+{
+	EndRound(Entity *_loser)
+		: loser(_loser)
+	{}
+
+	Entity *loser;
 };

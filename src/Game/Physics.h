@@ -3,7 +3,7 @@
 class PhysicSystem : public EntitySystem, EventSubscriber<Events::OnComponentAssigned<PhysicBody>>
 {
 public:
-	virtual ~PhysicSystem() override;
+	virtual ~PhysicSystem() override = default;
 
 	virtual void Configure(World* _world) override;
 
@@ -19,7 +19,7 @@ class CollisionSystem : public EntitySystem
 public:
 	CollisionSystem(const Size &_size);
 
-	virtual ~CollisionSystem() override;
+	virtual ~CollisionSystem() override = default;
 
 	virtual void Configure(World* _world) override;
 
@@ -27,12 +27,8 @@ public:
 
 	virtual void Update(World* _world, float _dt) override;
 
-	Vector Rotate(const Vector &_v, float _angle)
-	{
-		auto pi = acosf(-1);
-		auto rad = -_angle * pi / 180.f;
-		return Vector(_v.x * cosf(rad) - _v.y * sinf(rad), _v.x * sinf(rad) + _v.y * cosf(rad));
-	}
+private:
+	void ApplyCircleBoxCollision(ComponentPtr<Translation> _circle_tr, ComponentPtr<PhysicBody> _circle_pb, ComponentPtr<Translation> _box_tr);
 
 private:
 	Graphics *graphics;

@@ -32,6 +32,8 @@ namespace Engine
 
 		Status Inverter::Update()
 		{
+			cout << name << endl;
+
 			auto status = child->Update();
 
 			return status == Status::Success ? Status::Failure : Status::Success;

@@ -5,88 +5,79 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Framework">
-      <UniqueIdentifier>{cf077d6d-5892-4b66-849e-0bb1b284a0d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{e0fc57db-b217-4ca0-bd6b-39dfc14a0431}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Framework\BT">
+    <Filter Include="Engine">
+      <UniqueIdentifier>{cf077d6d-5892-4b66-849e-0bb1b284a0d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\BT">
       <UniqueIdentifier>{2f4991ca-5699-4332-91fb-383748e090c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Framework">
+      <UniqueIdentifier>{aba436d9-d8cb-4bcb-8c92-fcb069551c5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ECS">
+      <UniqueIdentifier>{4beee219-9121-409d-a2c5-96171585aecd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Framework\Application.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\Graphics.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\Image.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Framework\Input.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\World.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Framework\BehaviorTree.cpp">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Composites.cpp">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Decorators.cpp">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClCompile>
     <ClCompile Include="Game\Physics.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\World.cpp">
+      <Filter>Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Application.cpp">
+      <Filter>Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Graphics.cpp">
+      <Filter>Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Image.cpp">
+      <Filter>Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Input.cpp">
+      <Filter>Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Controller.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Framework\Application.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Image.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Graphics.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Framework\Vector.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Input.h">
-      <Filter>Framework</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Framework\World.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\Entities.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Random.h">
-      <Filter>Framework</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Framework\BehaviorTree.h">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Composites.h">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Decorators.h">
-      <Filter>Framework\BT</Filter>
+      <Filter>Engine\BT</Filter>
     </ClInclude>
     <ClInclude Include="Game\Physics.h">
       <Filter>Game</Filter>
@@ -94,10 +85,39 @@
     <ClInclude Include="Game\Components.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Entities.h">
+      <Filter>Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\World.h">
+      <Filter>Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Application.h">
+      <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Graphics.h">
+      <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Image.h">
+      <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Input.h">
+      <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Math.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Controller.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Shooter.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="hero.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

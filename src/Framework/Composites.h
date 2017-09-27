@@ -29,6 +29,9 @@ namespace Engine
 			Selector(const string &_name);
 
 			virtual Status Update() override;
+
+		private:
+			uint32_t last;
 		};
 
 		class Sequence : public Composite
@@ -37,6 +40,9 @@ namespace Engine
 			Sequence(const string &_name);
 
 			virtual Status Update() override;
+
+		private:
+			uint32_t last;
 		};
 	}
 }

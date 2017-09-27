@@ -1,6 +1,15 @@
 #pragma once
 
-class Game : public Application
+struct ScoreText
+{
+	uint32_t hero;
+	uint32_t enemy;
+	ImageText *text;
+};
+
+extern struct EndRound;
+
+class Game : public Application, EventSubscriber<EndRound>
 {
 public:
 	Game(const string &_name, const Size &_size);
@@ -11,6 +20,8 @@ public:
 	virtual void OnRender() override;
 	virtual void OnEnd() override;
 
+	virtual void Receive(World *_world, const EndRound &_event) override;
+
 private:
 	void SpawnBlocks(uint32_t _count);
 	void SpawnCharacters();
@@ -19,4 +30,6 @@ private:
 	unique_ptr<World> world;
 	bool is_game_started;
 	float spawn_characters_delay;
+	ScoreText scores;
+	bool restart;
 };

@@ -4,11 +4,6 @@
 
 #include "Physics.h"
 
-PhysicSystem::~PhysicSystem()
-{
-
-}
-
 void PhysicSystem::Configure(World* _world)
 {
 	_world->Subscribe<Events::OnComponentAssigned<PhysicBody>>(this);
@@ -40,9 +35,10 @@ void PhysicSystem::Update(World* _world, float _dt)
 			auto bullet = _world->Create("Bullet");
 			auto vs = bullet->Assign<Visual>(new Image("data/bullet.png"));
 			auto radius = 6.f;
-			bullet->Assign<Translation>(_tr->position + direction * (_pb->radius + radius + 1.f), vs->image->GetSize(), 0.f);
+			bullet->Assign<Translation>(_tr->position + direction * (_pb->radius + radius * 2.f), vs->image->GetSize(), 0.f);
 			auto pb = bullet->Assign<PhysicBody>(1.f, radius);
 			pb->velocity = direction * 300.f;
+			_ct->is_shooting = false;
 			_ct->shoot_delay = 0.1f;
 		}
 	});
@@ -58,12 +54,8 @@ void PhysicSystem::Receive(World *_world, const Events::OnComponentAssigned<Phys
 	auto tr = _event.entity->Get<Translation>();
 }
 
-CollisionSystem::CollisionSystem(const Size &_size) : size(_size)
-{
-
-}
-
-CollisionSystem::~CollisionSystem()
+CollisionSystem::CollisionSystem(const Size &_size) 
+	: size(_size)
 {
 
 }
@@ -100,11 +92,28 @@ void CollisionSystem::Update(World* _world, float _dt)
 			{
 				if (pb->is_circle && _pb->is_circle)
 				{
+					if (_entity->Is("Hero") && e->Is("Bullet"))
+					{
+						_world->Emit<EndRound>({ _entity });
+					}
+					if (e->Is("Hero") && _entity->Is("Bullet"))
+					{
+						_world->Emit<EndRound>({ e });
+					}
+					if (_entity->Is("Enemy") && e->Is("Bullet"))
+					{
+						_world->Emit<EndRound>({ _entity });
+					}
+					if (e->Is("Enemy") && _entity->Is("Bullet"))
+					{
+						_world->Emit<EndRound>({ e });
+					}
+
 					auto rv = pb->velocity - _pb->velocity;
 					auto normal = tr->position - _tr->position;
 					normal.Normalize();
 
-					float contact = DotProduct(rv, normal);
+					float contact = Math::DotProduct(rv, normal);
 					if (contact > 0)
 					{
 						continue;
@@ -119,7 +128,7 @@ void CollisionSystem::Update(World* _world, float _dt)
 				else if (!pb->is_circle && !_pb->is_circle)
 				{
 					auto normal = tr->position - _tr->position;
-					normal.SetLength((pb->radius + _pb->radius - normal.Length()) / 2.f + 1.f);
+					normal.SetLength((pb->radius + _pb->radius - normal.Length()) / 2.f + 16.f);
 					if (normal.x < 0)
 					{
 						normal = -normal;
@@ -138,7 +147,12 @@ void CollisionSystem::Update(World* _world, float _dt)
 				}
 				else if (!pb->is_circle && _pb->is_circle)
 				{
-					_pb->velocity = -_pb->velocity;
+					if (e->Is("SpawnHero") || e->Is("SpawnEnemy"))
+					{
+						continue;
+					}
+
+					ApplyCircleBoxCollision(_tr, _pb, tr);
 				}
 				else if (pb->is_circle && !_pb->is_circle)
 				{
@@ -147,54 +161,7 @@ void CollisionSystem::Update(World* _world, float _dt)
 						continue;
 					}
 
-					auto circle_pos = Rotate(tr->position - _tr->position, _tr->angle);
-					auto closest_point = circle_pos;
-
-					if (circle_pos.x < _tr->size.w / -2.f)
-					{
-						closest_point.x = _tr->size.w / -2.f;
-					}
-					else if (circle_pos.x > _tr->size.w / 2.f)
-					{
-						closest_point.x = _tr->size.w / 2.f;
-					}
-					if (circle_pos.y < _tr->size.h / -2.f)
-					{
-						closest_point.y = _tr->size.h / -2.f;
-					}
-					else if (circle_pos.y > _tr->size.h / 2.f)
-					{
-						closest_point.y = _tr->size.h / 2.f;
-					}
-
-					auto normal = circle_pos - closest_point;
-
-					if (normal.Length() < pb->radius)
-					{
-						if (normal.Length() < numeric_limits<float>::epsilon())
-						{
-							auto diff = _tr->size / 2.f - Vector(abs(circle_pos.x), abs(circle_pos.y));
-							if (diff.x < diff.y)
-							{
-								normal.x = circle_pos.x / abs(circle_pos.x);
-							}
-							else
-							{
-								normal.y = circle_pos.y / abs(circle_pos.y);
-							}
-							tr->position += Rotate(normal * diff * 2.f, -_tr->angle);
-						}
-						else
-						{
-							auto diff = normal.GetNormalized() * (pb->radius - normal.Length());
-							tr->position += Rotate(diff * 2.f, -_tr->angle);
-						}
-
-						auto velocity = Rotate(pb->velocity, _tr->angle);
-						normal.Normalize();
-						velocity -= normal * 2.f * DotProduct(velocity, normal);
-						pb->velocity = Rotate(velocity, -_tr->angle);
-					}
+					ApplyCircleBoxCollision(tr, pb, _tr);
 				}
 
 			}
@@ -222,12 +189,65 @@ void CollisionSystem::Update(World* _world, float _dt)
 				}
 				else
 				{
-					int a = 9;
-					++a;
+					normal.x = 0.f;
 				}
+
 				auto diff = normal.GetNormalized() * size / 2.f - normal;
 				_tr->position += diff * 2.f;
 			}
 		}
 	});
 }
+
+void CollisionSystem::ApplyCircleBoxCollision(ComponentPtr<Translation> _circle_tr, ComponentPtr<PhysicBody> _circle_pb, ComponentPtr<Translation> _box_tr)
+{
+	auto circle_pos = Math::RotateVector(_circle_tr->position - _box_tr->position, _box_tr->angle);
+	auto closest_point = circle_pos;
+
+	if (circle_pos.x < _box_tr->size.w / -2.f)
+	{
+		closest_point.x = _box_tr->size.w / -2.f;
+	}
+	else if (circle_pos.x > _box_tr->size.w / 2.f)
+	{
+		closest_point.x = _box_tr->size.w / 2.f;
+	}
+	if (circle_pos.y < _box_tr->size.h / -2.f)
+	{
+		closest_point.y = _box_tr->size.h / -2.f;
+	}
+	else if (circle_pos.y > _box_tr->size.h / 2.f)
+	{
+		closest_point.y = _box_tr->size.h / 2.f;
+	}
+
+	auto normal = circle_pos - closest_point;
+
+	if (normal.Length() < _circle_pb->radius)
+	{
+		if (normal.Length() < numeric_limits<float>::epsilon())
+		{
+			auto diff = _box_tr->size / 2.f - Vector(abs(circle_pos.x), abs(circle_pos.y));
+			if (diff.x < diff.y)
+			{
+				normal.x = Math::Sign(circle_pos.x);
+			}
+			else
+			{
+				normal.y = Math::Sign(circle_pos.y);
+			}
+			_circle_tr->position += Math::RotateVector(normal * diff * 2.f, -_box_tr->angle);
+		}
+		else
+		{
+			auto diff = normal.GetNormalized() * (_circle_pb->radius - normal.Length());
+			_circle_tr->position += Math::RotateVector(diff * 2.f, -_box_tr->angle);
+		}
+
+		auto velocity = Math::RotateVector(_circle_pb->velocity, _box_tr->angle);
+		normal.Normalize();
+		velocity -= normal * 2.f * Math::DotProduct(velocity, normal);
+		_circle_pb->velocity = Math::RotateVector(velocity, -_box_tr->angle);
+	}
+}
+

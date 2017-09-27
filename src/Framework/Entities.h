@@ -6,8 +6,8 @@ namespace Engine
 
 	namespace Internal
 	{
-		typedef type_index TypeIndex;
-		template <typename T>
+		using TypeIndex = type_index;
+		template <class T>
 		TypeIndex GetTypeIndex()
 		{
 			return type_index(typeid(T));
@@ -18,7 +18,7 @@ namespace Engine
 			virtual ~BaseComponent() = 0 {}
 		};
 
-		template <typename T>
+		template <class T>
 		struct Component : BaseComponent
 		{
 			Component() {}
@@ -34,7 +34,7 @@ namespace Engine
 		};
 	}
 
-	template <typename T>
+	template <class T>
 	class ComponentPtr
 	{
 	public:
@@ -60,9 +60,9 @@ namespace Engine
 			return IsValid();
 		}
 
-		T &Get()
+		T *Get()
 		{
-			return *component;
+			return component;
 		}
 
 		bool IsValid() const
@@ -102,13 +102,13 @@ namespace Engine
 			RemoveAll();
 		}
 
-		template <typename T, typename... Args>
+		template <class T, typename... Args>
 		ComponentPtr<T> Assign(Args&&... _args);
 
-		template <typename T>
+		template <class T>
 		ComponentPtr<T> Get();
 
-		template <typename T>
+		template <class T>
 		bool Remove()
 		{
 			auto found = components.find(Internal::GetTypeIndex<T>());
@@ -123,14 +123,14 @@ namespace Engine
 
 		void RemoveAll();
 		
-		template <typename T>
+		template <class T>
 		bool Has() const
 		{
 			auto index = Internal::GetTypeIndex<T>();
 			return components.find(index) != components.end();
 		}
 
-		template <typename T1, typename T2, typename... Types>
+		template <class T1, class T2, typename... Types>
 		bool Has() const
 		{
 			return Has<T1>() && Has<T2, Types...>();
@@ -161,7 +161,7 @@ namespace Engine
 			Entity *entity;
 		};
 
-		template <typename T>
+		template <class T>
 		struct OnComponentAssigned
 		{
 			Entity *entity;
@@ -169,7 +169,7 @@ namespace Engine
 		};
 	}
 
-	template <typename T>
+	template <class T>
 	class EventSubscriber : public Internal::BaseSubscriber
 	{
 	public:
@@ -188,7 +188,7 @@ namespace Engine
 		components.clear();
 	}
 
-	template <typename T, typename... Args>
+	template <class T, typename... Args>
 	ComponentPtr<T> Entity::Assign(Args&&... _args)
 	{
 		auto found = components.find(Internal::GetTypeIndex<T>());
@@ -212,7 +212,7 @@ namespace Engine
 		}
 	}
 
-	template <typename T>
+	template <class T>
 	ComponentPtr<T> Entity::Get()
 	{
 		auto found = components.find(Internal::GetTypeIndex<T>());

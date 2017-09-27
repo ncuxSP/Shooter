@@ -46,7 +46,7 @@ namespace Engine
 		~ImageCache();
 
 	private:
-		ImageCache() {}
+		ImageCache() = default;
 		ImageCache(const ImageCache &) = default;
 		ImageCache& operator=(ImageCache &) = default;
 

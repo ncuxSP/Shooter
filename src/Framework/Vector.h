@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	template<typename Type> 
+	template<class Type> 
 	inline bool MathVectorEqual(Type _a, Type _b)
 	{
 		return (_a == _b);
@@ -13,14 +13,14 @@ namespace Engine
 		return (fabs(_a - _b) < numeric_limits<float>::epsilon());
 	}
 
-	template<typename Type, uint32_t Size> 
+	template<class Type, uint32_t Size> 
 	class MathVectorBase
 	{
 	public:
 		Type v[Size];
 	};
 
-	template<typename Type>
+	template<class Type>
 	class MathVectorBase <Type, 2>
 	{
 	public:
@@ -50,7 +50,7 @@ namespace Engine
 		}
 	};
 
-	template<typename Type> 
+	template<class Type> 
 	class MathVectorBase <Type, 3>
 	{
 	public:
@@ -80,7 +80,7 @@ namespace Engine
 		}
 	};
 
-	template<typename Type>
+	template<class Type>
 	class MathVectorBase <Type, 4>
 	{
 	public:
@@ -115,7 +115,7 @@ namespace Engine
 		}
 	};
 
-	template<typename Type, uint32_t Size> 
+	template<class Type, uint32_t Size> 
 	class MathVector : public MathVectorBase<Type, Size>
 	{
 	public:
@@ -131,7 +131,7 @@ namespace Engine
 			}
 		}
 
-		template<typename _Type, uint32_t _Size>
+		template<class _Type, uint32_t _Size>
 		inline MathVector(const MathVector<_Type, _Size> &_vector)
 		{
 			const uint32_t min_size = Size < _Size ? Size : _Size;
@@ -238,7 +238,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type, uint32_t _Size>
+		template<class _Type, uint32_t _Size>
 		inline MathVector<Type, Size> operator = (const MathVector<_Type, _Size> &_vector)
 		{
 			const uint32_t min_size = Size < _Size ? Size : _Size;
@@ -268,7 +268,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> operator + (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -293,7 +293,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> operator - (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -318,7 +318,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> operator * (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -343,7 +343,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> operator / (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -356,7 +356,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> operator * (_Type _scale) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -369,7 +369,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector operator / (_Type _scale) const
 		{
 			MathVector<Type, Size> new_vector;
@@ -401,7 +401,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> & operator += (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this + _vector;
@@ -416,7 +416,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> & operator -= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this - _vector;
@@ -431,7 +431,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> & operator *= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this  *_vector;
@@ -446,7 +446,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector<Type, Size> & operator /= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this / _vector;
@@ -454,7 +454,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector & operator *= (_Type _scale)
 		{
 			*this = *this  *_scale;
@@ -462,7 +462,7 @@ namespace Engine
 			return *this;
 		}
 
-		template<typename _Type>
+		template<class _Type>
 		inline MathVector & operator /= (_Type _scale)
 		{
 			*this = *this / _scale;
@@ -497,35 +497,38 @@ namespace Engine
 		}
 	};
 
-	template<typename Type, uint32_t Size>
-	inline Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
+	namespace Math
 	{
-		Type result = static_cast<Type>(0);
-
-		for (uint32_t i = 0; i < Size; ++i)
+		template<class Type, uint32_t Size>
+		inline Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
 		{
-			result += _a.v[i]  *_b.v[i];
+			Type result = static_cast<Type>(0);
+
+			for (uint32_t i = 0; i < Size; ++i)
+			{
+				result += _a.v[i] * _b.v[i];
+			}
+
+			return result;
 		}
 
-		return result;
-	}
+		template<class Type>
+		inline MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
+		{
+			MathVector<Type, 3> result;
 
-	template<typename Type>
-	inline MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
-	{
-		MathVector<Type, 3> result;
+			result.x = _a.y  *_b.z - _a.z  *_b.y;
+			result.y = _a.z  *_b.x - _a.x  *_b.z;
+			result.z = _a.x  *_b.y - _a.y  *_b.x;
 
-		result.x = _a.y  *_b.z - _a.z  *_b.y;
-		result.y = _a.z  *_b.x - _a.x  *_b.z;
-		result.z = _a.x  *_b.y - _a.y  *_b.x;
+			return result;
+		}
 
-		return result;
-	}
-
-	template<typename Type, uint32_t Size>
-	inline bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b,	const MathVector<Type, Size> &_point)
-	{
-		return (DotProduct((_a - _point), (_b - _point)) <= 0);
+		template<class Type, uint32_t Size>
+		inline bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b, const MathVector<Type, Size> &_point)
+		{
+			return (DotProduct((_a - _point), (_b - _point)) <= 0);
+		}
 	}
 
 	using Size = MathVector<int32_t, 2>;

@@ -3,7 +3,8 @@
 namespace Engine
 {
 	World::World()
-		:	last_id(0)
+		: last_id(0)
+		, start_reset(false)
 	{
 	
 	}
@@ -35,8 +36,12 @@ namespace Engine
 	
 	void World::Destroy(Entity *_entity)
 	{
-		removed_entities.push_back(_entity);
-		Emit<Events::OnEntityRemoved>({ _entity });
+		if (find(removed_entities.begin(), removed_entities.end(), _entity) == removed_entities.end())
+		{
+			removed_entities.push_back(_entity);
+
+			Emit<Events::OnEntityRemoved>({ _entity });
+		}
 	}
 	
 	void World::Update(float _dt)
@@ -62,17 +67,23 @@ namespace Engine
 			entities.insert(entities.end(), new_entities.begin(), new_entities.end());
 			new_entities.clear();
 		}
+
+		if (start_reset)
+		{
+			for (auto *entity : entities)
+			{
+				Emit<Events::OnEntityRemoved>({ entity });
+				delete entity;
+			}
+			entities.clear();
+			last_id = 0;
+			start_reset = false;
+		}
 	}
 	
 	void World::Reset()
 	{
-		for (auto *entity : entities)
-		{
-			Emit<Events::OnEntityRemoved>({ entity });
-			delete entity;
-		}
-		entities.clear();
-		last_id = 0;
+		start_reset = true;
 	}
 	
 	void World::RegisterSystem(EntitySystem *_system)
@@ -123,4 +134,16 @@ namespace Engine
 			_call_back(entity);
 		}
 	}
+
+	Entity *World::GetByTag(const string &_tag) const
+	{
+		for (auto *entity : entities)
+		{
+			if (entity->Is(_tag))
+			{
+				return entity;
+			}
+		}
+	}
+
 }
