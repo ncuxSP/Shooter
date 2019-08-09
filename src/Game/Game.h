@@ -7,7 +7,7 @@ struct ScoreText
 	ImageText *text;
 };
 
-extern struct EndRound;
+struct EndRound;
 
 class Game : public Application, EventSubscriber<EndRound>
 {

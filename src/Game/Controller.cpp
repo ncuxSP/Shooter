@@ -10,10 +10,24 @@ ControllerSystem::ControllerSystem(Input *_input)
 
 }
 
+ControllerSystem::~ControllerSystem()
+{
+	for (auto c : controls)
+	{
+		delete c.second;
+	}
+}
+
 void ControllerSystem::Configure(World *_world)
 {
 	_world->Subscribe<EndRound>(this);
 
+	BindControls();
+	InitAI(_world);
+}
+
+void ControllerSystem::InitAI(World* _world)
+{
 	ai = BTBuilder()
 		.Selector("select behavior")
 			.Sequence("retreat")
@@ -23,7 +37,7 @@ void ControllerSystem::Configure(World *_world)
 				.Action("moving", bind(&ControllerSystem::Moving, this))
 			.End()
 			.Sequence("shoot if can")
-				.Condition("if seing target", bind(&ControllerSystem::IsCanSeeTarget, this))
+				.Condition("if seeing target", bind(&ControllerSystem::IsCanSeeTarget, this))
 				.Selector("aiming")
 					.Condition("if aimed", bind(&ControllerSystem::IsAimed, this))
 					.Action("aiming to target", bind(&ControllerSystem::Aiming, this))
@@ -47,6 +61,31 @@ void ControllerSystem::Configure(World *_world)
 	FindNewLocation();
 }
 
+void ControllerSystem::BindControls()
+{
+	auto control = CreateControl<float>("Move", 0.0f);
+	control->Bind(SDL_SCANCODE_W, 1.0f);
+	control->Bind(SDL_SCANCODE_UP, 1.0f);
+	control->Bind(SDL_SCANCODE_S, -1.0f);
+	control->Bind(SDL_SCANCODE_DOWN, -1.0f);
+
+	control = CreateControl<float>("Strafe", 0.0f);
+	control->Bind(SDL_SCANCODE_E, 1.0f);
+	control->Bind(SDL_SCANCODE_X, 1.0f);
+	control->Bind(SDL_SCANCODE_Q, -1.0f);
+	control->Bind(SDL_SCANCODE_Z, -1.0f);
+
+	control = CreateControl<float>("Rotate", 0.0f);
+	control->Bind(SDL_SCANCODE_D, 1.0f);
+	control->Bind(SDL_SCANCODE_RIGHT, 1.0f);
+	control->Bind(SDL_SCANCODE_A, -1.0f);
+	control->Bind(SDL_SCANCODE_LEFT, -1.0f);
+
+	auto shoot = CreateControl<bool>("Shoot", false);
+	shoot->Bind(SDL_SCANCODE_RETURN, true);
+	shoot->Bind(SDL_SCANCODE_SPACE, true);
+}
+
 void ControllerSystem::UnConfigure(World *_world)
 {
 	_world->UnSubscribeAll(this);
@@ -58,55 +97,12 @@ void ControllerSystem::Update(World *_world, float _dt)
 	{
 		if (_entity->Is("Hero"))
 		{
-			if (input->IsKeyPressed(SDL_SCANCODE_W) || input->IsKeyPressed(SDL_SCANCODE_UP))
-			{
-				_ct->axis.y = 1.f;
-			}
-			else if (input->IsKeyPressed(SDL_SCANCODE_S) || input->IsKeyPressed(SDL_SCANCODE_DOWN))
-			{
-				_ct->axis.y = -1.f;
-			}
-			else
-			{
-				_ct->axis.y = 0.f;
-			}
-
-			if (input->IsKeyPressed(SDL_SCANCODE_Q) || input->IsKeyPressed(SDL_SCANCODE_Z))
-			{
-				_ct->axis.x = -1.f;
-			}
-			else if (input->IsKeyPressed(SDL_SCANCODE_E) || input->IsKeyPressed(SDL_SCANCODE_X))
-			{
-				_ct->axis.x = 1.f;
-			}
-			else
-			{
-				_ct->axis.x = 0.f;
-			}
-
+			_ct->axis.y = GetControlValue<float>("Move");
+			_ct->axis.x = GetControlValue<float>("Strafe");
 			_ct->axis.Normalize();
 
-			if (input->IsKeyPressed(SDL_SCANCODE_A) || input->IsKeyPressed(SDL_SCANCODE_LEFT))
-			{
-				_ct->rotation = -1.f;
-			}
-			else if (input->IsKeyPressed(SDL_SCANCODE_D) || input->IsKeyPressed(SDL_SCANCODE_RIGHT))
-			{
-				_ct->rotation = 1.f;
-			}
-			else
-			{
-				_ct->rotation = 0.f;
-			}
-
-			if (input->IsKeyDown(SDL_SCANCODE_RETURN) || input->IsKeyDown(SDL_SCANCODE_SPACE))
-			{
-				_ct->is_shooting = true;
-			}
-			else
-			{
-				_ct->is_shooting = false;
-			}
+			_ct->rotation = GetControlValue<float>("Rotate");
+			_ct->is_shooting = GetControlValue<bool>("Shoot");
 		}
 		else
 		{
@@ -173,12 +169,13 @@ bool ControllerSystem::IsCanSeeTargetFrom(const Point &_position) const
 
 	blackboard.world->Each<Translation, PhysicBody>(
 		[&](Entity *_entity, ComponentPtr<Translation> _tr, ComponentPtr<PhysicBody> _pb) -> void
-	{
-		if (result && _entity->Is("Box"))
-		{
-			result = !Math::IntersectSegmentRectangle(_position, blackboard.target - _position, _tr->ToRectangle());
-		}
-	});
+			{
+				if (result && _entity->Is("Box"))
+				{
+					result = !Math::IntersectSegmentRectangle(_position, blackboard.target - _position, _tr->ToRectangle());
+				}
+			}
+	);
 
 	return result;
 }

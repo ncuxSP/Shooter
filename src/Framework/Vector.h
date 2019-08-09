@@ -434,7 +434,7 @@ namespace Engine
 		template<class _Type>
 		inline MathVector<Type, Size> & operator *= (const MathVector<_Type, Size> &_vector)
 		{
-			*this = *this  *_vector;
+			*this = *this * _vector;
 
 			return *this;
 		}
@@ -457,7 +457,7 @@ namespace Engine
 		template<class _Type>
 		inline MathVector & operator *= (_Type _scale)
 		{
-			*this = *this  *_scale;
+			*this = *this * _scale;
 
 			return *this;
 		}
