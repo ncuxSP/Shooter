@@ -29,6 +29,8 @@ namespace Engine
 				Component() {}
 				Component(const AnyStruct &_data) : data(_data) {}
 				virtual ~Component() override {}
+
+			public:
 				AnyStruct data;
 			};
 
@@ -84,13 +86,11 @@ namespace Engine
 		class EntitySystem
 		{
 		public:
-			virtual ~EntitySystem() {}
+			virtual ~EntitySystem() = 0 {}
 
-			virtual void Configure(World *_world) {}
-
-			virtual void UnConfigure(World *_world) {}
-
-			virtual void Update(World *_world, float _dt) {}
+			virtual void Configure(World *_world) = 0;
+			virtual void UnConfigure(World *_world) = 0;
+			virtual void Update(World *_world, float _dt) = 0;
 		};
 
 		namespace Events

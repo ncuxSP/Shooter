@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	template<class Type>
+	template<class Type, class = typename enable_if_t<is_arithmetic_v<Type>>>
 	inline bool MathVectorEqual(Type _a, Type _b)
 	{
 		return (_a == _b);
@@ -13,7 +13,7 @@ namespace Engine
 		return (fabs(_a - _b) < numeric_limits<float>::epsilon());
 	}
 
-	template<class Type, uint32_t Size>
+	template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
 	class MathVectorBase
 	{
 	public:
@@ -504,7 +504,7 @@ namespace Engine
 
 	namespace Math
 	{
-		template<class Type, uint32_t Size>
+		template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
 		inline Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
 		{
 			Type result = static_cast<Type>(0);
@@ -517,7 +517,7 @@ namespace Engine
 			return result;
 		}
 
-		template<class Type>
+		template<class Type, class = typename enable_if_t<is_arithmetic_v<Type>>>
 		inline MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
 		{
 			MathVector<Type, 3> result;
@@ -529,7 +529,7 @@ namespace Engine
 			return result;
 		}
 
-		template<class Type, uint32_t Size>
+		template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
 		inline bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b, const MathVector<Type, Size> &_point)
 		{
 			return (DotProduct((_a - _point), (_b - _point)) <= 0);
