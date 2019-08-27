@@ -23,7 +23,7 @@ namespace Engine
 
 	private:
 		bool is_will_quit;
-		bool key_down[SDL_NUM_SCANCODES];		
+		bool key_down[SDL_NUM_SCANCODES];
 		bool key_up[SDL_NUM_SCANCODES];
 		const uint8_t *keyboard;
 	};

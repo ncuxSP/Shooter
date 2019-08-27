@@ -23,19 +23,19 @@ namespace Engine
 
 			void UnRegisterSystem(EntitySystem *_system);
 
-			template <class T>
-			void Subscribe(EventSubscriber<T> *_subscriber);
+			template <class EventType>
+			void Subscribe(EventSubscriber<EventType> *_subscriber);
 
-			template <class T>
-			void UnSubscribe(EventSubscriber<T> *_subscriber);
+			template <class EventType>
+			void UnSubscribe(EventSubscriber<EventType> *_subscriber);
 
 			void UnSubscribeAll(Internal::BaseSubscriber *_subscriber);
 
-			template <class T>
-			void Emit(const T &_event);
+			template <class EventType>
+			void Emit(const EventType &_event);
 
-			template <typename... Types>
-			void Each(typename common_type_t<function<void(Entity *, ComponentPtr<Types>...)>> _call_back);
+			template <typename... ArgumentTypes>
+			void Each(typename common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back);
 
 			void EachTag(const string &_tag, function<void(Entity *)> _call_back);
 
@@ -53,10 +53,10 @@ namespace Engine
 			bool start_reset;
 		};
 
-		template <class T>
-		void World::Subscribe(EventSubscriber<T> *_subscriber)
+		template <class EventType>
+		void World::Subscribe(EventSubscriber<EventType> *_subscriber)
 		{
-			auto index = Internal::GetTypeIndex<T>();
+			auto index = Internal::GetTypeIndex<EventType>();
 			auto found = subscribers.find(index);
 			if (found == subscribers.end())
 			{
@@ -70,10 +70,10 @@ namespace Engine
 			}
 		}
 
-		template <class T>
-		void World::UnSubscribe(EventSubscriber<T> *_subscriber)
+		template <class EventType>
+		void World::UnSubscribe(EventSubscriber<EventType> *_subscriber)
 		{
-			auto index = Internal::GetTypeIndex<T>();
+			auto index = Internal::GetTypeIndex<EventType>();
 			auto found = subscribers.find(index);
 			if (found != subscribers.end())
 			{
@@ -85,29 +85,29 @@ namespace Engine
 			}
 		}
 
-		template <class T>
-		void World::Emit(const T &_event)
+		template <class EventType>
+		void World::Emit(const EventType &_event)
 		{
-			auto index = Internal::GetTypeIndex<T>();
+			auto index = Internal::GetTypeIndex<EventType>();
 			auto found = subscribers.find(index);
 			if (found != subscribers.end())
 			{
 				for (auto *base : found->second)
 				{
-					auto *sub = reinterpret_cast<EventSubscriber<T> *>(base);
+					auto *sub = reinterpret_cast<EventSubscriber<EventType> *>(base);
 					sub->Receive(this, _event);
 				}
 			}
 		}
 
-		template <typename... Types>
-		void World::Each(typename common_type_t<function<void(Entity *, ComponentPtr<Types>...)>> _call_back)
+		template <typename... ArgumentTypes>
+		void World::Each(typename common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back)
 		{
 			for (auto *entity : entities)
 			{
-				if (entity->Has<Types...>())
+				if (entity->Has<ArgumentTypes...>())
 				{
-					_call_back(entity, entity->template Get<Types>()...);
+					_call_back(entity, entity->template Get<ArgumentTypes>()...);
 				}
 			}
 		}

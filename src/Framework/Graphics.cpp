@@ -3,7 +3,7 @@
 namespace Engine
 {
 	Graphics::Graphics(SDL_Window *_window, const Size &_size)
-		:	renderer(nullptr)
+		: renderer(nullptr)
 	{
 		renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -14,7 +14,7 @@ namespace Engine
 
 		SDL_RenderSetLogicalSize(renderer, _size.w, _size.h);
 	}
-	
+
 	Graphics::~Graphics()
 	{
 		ImageCache::GetInstance().Flush();
@@ -25,7 +25,7 @@ namespace Engine
 	{
 		return new Image(_file_name);
 	}
-	
+
 	void Graphics::SetColor(const Color &_color)
 	{
 		SDL_SetRenderDrawColor(renderer, _color.r, _color.g, _color.b, _color.a);

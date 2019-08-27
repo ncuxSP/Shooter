@@ -96,27 +96,27 @@ namespace Engine
 					return status;
 				}
 			}
-// 
-// 			for (auto i = last; i < children.size(); ++i)
-// 			{
-// 				auto &child = children[i];
-// 
-// 				auto status = child->Update();
-// 
-// 				if (status != Status::Success)
-// 				{
-// 					if (status == Status::Running)
-// 					{
-// 						last = i;
-// 					}
-// 					else
-// 					{
-// 						last = 0;
-// 					}
-// 					return status;
-// 				}
-// 			}
-// 			last = 0;
+			// 
+			// 			for (auto i = last; i < children.size(); ++i)
+			// 			{
+			// 				auto &child = children[i];
+			// 
+			// 				auto status = child->Update();
+			// 
+			// 				if (status != Status::Success)
+			// 				{
+			// 					if (status == Status::Running)
+			// 					{
+			// 						last = i;
+			// 					}
+			// 					else
+			// 					{
+			// 						last = 0;
+			// 					}
+			// 					return status;
+			// 				}
+			// 			}
+			// 			last = 0;
 
 			return Status::Success;
 		}

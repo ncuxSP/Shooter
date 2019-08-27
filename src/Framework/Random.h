@@ -6,35 +6,35 @@ namespace Engine
 	{
 	public:
 		Random()
-			:	mt(_Random_device())
+			: mt(_Random_device())
 		{}
 
-		template <class T, typename enable_if_t<is_integral<T>::value>* = 0>
-		T Get(T _min, T _max)
+		template <class ValueType, typename enable_if_t<is_integral<ValueType>::value> * = 0>
+		ValueType Get(ValueType _min, ValueType _max)
 		{
-			uniform_int_distribution<T> idis(_min, _max);
+			uniform_int_distribution<ValueType> idis(_min, _max);
 			return idis(mt);
 		}
 
-		template <class T, typename enable_if_t<is_floating_point<T>::value>* = 0>
-		T Get(T _min, T _max)
+		template <class ValueType, typename enable_if_t<is_floating_point<ValueType>::value> * = 0>
+		ValueType Get(ValueType _min, ValueType _max)
 		{
-			uniform_real_distribution<T> rdis(_min, _max);
+			uniform_real_distribution<ValueType> rdis(_min, _max);
 			return rdis(mt);
 		}
 
-		template <class T>
-		T GetFromZero(T _max)
+		template <class ValueType>
+		ValueType GetFromZero(ValueType _max)
 		{
-			return Get<T>(static_cast<T>(0), _max);
+			return Get<ValueType>(static_cast<ValueType>(0), _max);
 		}
 
-		template <class T, typename enable_if_t<is_floating_point<T>::value>* = 0>
-		T GetUnitRange()
+		template <class ValueType, typename enable_if_t<is_floating_point<ValueType>::value> * = 0>
+		ValueType GetUnitRange()
 		{
-			return Get(static_cast<T>(0), _max);
+			return Get(static_cast<ValueType>(0), _max);
 		}
-		
+
 	private:
 		mt19937 mt;
 	};

@@ -48,7 +48,7 @@ namespace Engine
 	private:
 		ImageCache() = default;
 		ImageCache(const ImageCache &) = default;
-		ImageCache& operator=(ImageCache &) = default;
+		ImageCache &operator=(ImageCache &) = default;
 
 	private:
 		unordered_map<string, SDL_Surface *> cache;
@@ -59,9 +59,9 @@ namespace Engine
 	public:
 		ImageText(const string &_text, const Size &_size, const Color &_color);
 		virtual ~ImageText() override;
-		
+
 		void SetText(const string &_text);
-		
+
 		void SetSize(const Size &_size);
 
 	private:

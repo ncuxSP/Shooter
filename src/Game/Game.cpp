@@ -8,9 +8,9 @@
 
 
 Game::Game(const string &_name, const Size &_size)
-	:	Application(_name, _size)
-	,	is_game_started(false)
-	,	restart(false)
+	: Application(_name, _size)
+	, is_game_started(false)
+	, restart(false)
 {
 }
 
@@ -18,8 +18,6 @@ Game::~Game() = default;
 
 void Game::OnBegin()
 {
-	Application::OnBegin();
-
 	graphics->SetColor(Color(255));
 
 	world = make_unique<World>();
@@ -38,8 +36,6 @@ void Game::OnBegin()
 
 void Game::OnUpdate(float _dt)
 {
-	Application::OnUpdate(_dt);
-
 	world->Update(_dt);
 
 	if (!is_game_started && spawn_characters_delay < 0.f)
@@ -59,20 +55,16 @@ void Game::OnUpdate(float _dt)
 
 void Game::OnRender()
 {
-	Application::OnRender();
-
-	world->Each<Visual, Translation>([&](Entity *_entity, ComponentPtr<Visual> _vs, ComponentPtr<Translation> _tr) -> void
-	{
-		graphics->DrawImage(_vs->image.get(), _tr->position - _tr->size / 2, _tr->angle);
-	});
+	world->Each<Visual, Translation>([&](Entity*_entity, ComponentPtr<Visual> _vs, ComponentPtr<Translation> _tr) -> void
+		{
+			graphics->DrawImage(_vs->image.get(), _tr->position - _tr->size / 2, _tr->angle);
+		});
 
 	graphics->DrawImage(scores.text, Point(0));
 }
 
 void Game::OnEnd()
 {
-	Application::OnEnd();
-
 	delete scores.text;
 
 	world->UnSubscribeAll(this);
@@ -139,7 +131,7 @@ void Game::SpawnCharacters()
 	hero->Assign<PhysicBody>(10.f, 32.f);
 
 	spawn = world->GetByTag("SpawnEnemy");
-	
+
 	auto enemy = world->Create("Enemy");
 	visual = enemy->Assign<Visual>(new Image("data/hero.png"));
 	enemy->Assign<Translation>(spawn->Get<Translation>()->position, visual->image->GetSize(), 180.f);

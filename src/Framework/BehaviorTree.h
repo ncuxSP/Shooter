@@ -55,10 +55,10 @@ namespace Engine
 			Builder &Condition(const string &_name, function<bool(void)> _condition);
 			//Decorators
 			Builder &Inverter(const string &_name);
-// 			Builder &Repeater(const string &_name);
-// 			Builder &Succeeder(const string &_name);
-// 			Builder &Failer(const string &_name);
-			//Composites
+			// 			Builder &Repeater(const string &_name);
+			// 			Builder &Succeeder(const string &_name);
+			// 			Builder &Failer(const string &_name);
+						//Composites
 			Builder &Parallel(const string &_name);
 			Builder &Selector(const string &_name);
 			Builder &Sequence(const string &_name);

@@ -10,10 +10,10 @@ namespace Engine
 		{
 			using TypeIndex = type_index;
 
-			template <class T>
+			template <class AnyType>
 			TypeIndex GetTypeIndex()
 			{
-				return TypeIndex(typeid(T));
+				return TypeIndex(typeid(AnyType));
 			}
 
 			class BaseComponent
@@ -22,14 +22,14 @@ namespace Engine
 				virtual ~BaseComponent() = 0 {}
 			};
 
-			template <class T>
+			template <class AnyStruct>
 			class Component : public BaseComponent
 			{
 			public:
 				Component() {}
-				Component(const T &_data) : data(_data) {}
+				Component(const AnyStruct &_data) : data(_data) {}
 				virtual ~Component() override {}
-				T data;
+				AnyStruct data;
 			};
 
 			class BaseSubscriber
@@ -39,7 +39,7 @@ namespace Engine
 			};
 		}
 
-		template <class T>
+		template <class AnyStruct>
 		class ComponentPtr
 		{
 		public:
@@ -49,13 +49,13 @@ namespace Engine
 
 			}
 
-			ComponentPtr(T *component)
+			ComponentPtr(AnyStruct *component)
 				: component(component)
 			{
 
 			}
 
-			T *operator->() const
+			AnyStruct *operator->() const
 			{
 				return component;
 			}
@@ -65,7 +65,7 @@ namespace Engine
 				return IsValid();
 			}
 
-			T *Get()
+			AnyStruct *Get()
 			{
 				return component;
 			}
@@ -76,7 +76,7 @@ namespace Engine
 			}
 
 		private:
-			T *component;
+			AnyStruct *component;
 		};
 
 		class Entity;
@@ -105,21 +105,21 @@ namespace Engine
 				Entity *entity;
 			};
 
-			template <class T>
+			template <class AnyStruct>
 			struct OnComponentAssigned
 			{
 				Entity *entity;
-				ComponentPtr<T> component;
+				ComponentPtr<AnyStruct> component;
 			};
 		}
 
-		template <class T>
+		template <class EventType>
 		class EventSubscriber : public Internal::BaseSubscriber
 		{
 		public:
 			virtual ~EventSubscriber() override {}
 
-			virtual void Receive(World *_world, const T &_event) = 0;
+			virtual void Receive(World *_world, const EventType &_event) = 0;
 		};
 
 		class Entity
@@ -138,28 +138,28 @@ namespace Engine
 				RemoveAll();
 			}
 
-			template <class T, typename... Args>
-			ComponentPtr<T> Assign(Args&&... _args);
+			template <class AnyStruct, typename... ConstructorArgs>
+			ComponentPtr<AnyStruct> Assign(ConstructorArgs &&... _args);
 
-			template <class T>
-			ComponentPtr<T> Get();
+			template <class AnyStruct>
+			ComponentPtr<AnyStruct> Get();
 
-			template <class T>
+			template <class AnyStruct>
 			bool Remove();
 
 			void RemoveAll();
 
-			template <class T>
+			template <class AnyStruct>
 			bool Has() const
 			{
-				auto index = Internal::GetTypeIndex<T>();
+				auto index = Internal::GetTypeIndex<AnyStruct>();
 				return components.find(index) != components.end();
 			}
 
-			template <class T1, class T2, typename... Types>
+			template <class C1, class C2, typename... OtherComponents>
 			bool Has() const
 			{
-				return Has<T1>() && Has<T2, Types...>();
+				return Has<C1>() && Has<C2, OtherComponents...>();
 			}
 
 			uint32_t GetId() const;
@@ -185,47 +185,47 @@ namespace Engine
 			components.clear();
 		}
 
-		template <class T, typename... Args>
-		ComponentPtr<T> Entity::Assign(Args&&... _args)
+		template <class AnyStruct, typename... ConstructorArgs>
+		ComponentPtr<AnyStruct> Entity::Assign(ConstructorArgs &&... _args)
 		{
-			Internal::Component<T>* component;
-			auto found = components.find(Internal::GetTypeIndex<T>());
+			Internal::Component<AnyStruct> *component;
+			auto found = components.find(Internal::GetTypeIndex<AnyStruct>());
 			if (found != components.end())
 			{
-				component = reinterpret_cast<Internal::Component<T> *>(found->second);
-				component->data = T(_args...);
+				component = reinterpret_cast<Internal::Component<AnyStruct> *>(found->second);
+				component->data = AnyStruct(_args...);
 			}
 			else
 			{
-				component = new Internal::Component<T>(T(_args...));
-				components.insert({ Internal::GetTypeIndex<T>(), component });
+				component = new Internal::Component<AnyStruct>(AnyStruct(_args...));
+				components.insert({ Internal::GetTypeIndex<AnyStruct>(), component });
 			}
 
-			auto ptr = ComponentPtr<T>(&component->data);
-			world->Emit<Events::OnComponentAssigned<T>>({ this, ptr });
+			auto ptr = ComponentPtr<AnyStruct>(&component->data);
+			world->Emit<Events::OnComponentAssigned<AnyStruct>>({ this, ptr });
 
 			return ptr;
 		}
 
-		template <class T>
-		ComponentPtr<T> Entity::Get()
+		template <class AnyStruct>
+		ComponentPtr<AnyStruct> Entity::Get()
 		{
-			auto found = components.find(Internal::GetTypeIndex<T>());
+			auto found = components.find(Internal::GetTypeIndex<AnyStruct>());
 			if (found != components.end())
 			{
-				auto component = reinterpret_cast<Internal::Component<T> *>(found->second);
-				return ComponentPtr<T>(&component->data);
+				auto component = reinterpret_cast<Internal::Component<AnyStruct> *>(found->second);
+				return ComponentPtr<AnyStruct>(&component->data);
 			}
 			else
 			{
-				return ComponentPtr<T>();
+				return ComponentPtr<AnyStruct>();
 			}
 		}
 
-		template<class T>
+		template<class AnyStruct>
 		bool Entity::Remove()
 		{
-			auto found = components.find(Internal::GetTypeIndex<T>());
+			auto found = components.find(Internal::GetTypeIndex<AnyStruct>());
 			if (found != components.end())
 			{
 				delete found->second;

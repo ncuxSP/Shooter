@@ -11,23 +11,23 @@ namespace Engine
 			float angle;
 		};
 
-		template <class T>
-		T Sign(T _in)
+		template <class ValueType>
+		ValueType Sign(ValueType _in)
 		{
-			T zero = static_cast<T>(0);
-			T plus = static_cast<T>(1);
-			T minus = static_cast<T>(-1);
+			auto zero = static_cast<ValueType>(0);
+			auto plus = static_cast<ValueType>(1);
+			auto minus = static_cast<ValueType>(-1);
 			return _in > zero ? plus : _in < zero ? minus : zero;
 		}
-		
-		inline Vector RotateVector(const Vector &_v, float _angle)
+
+		inline Vector RotateVector(const Vector & _v, float _angle)
 		{
 			auto pi = acosf(-1);
 			auto rad = -_angle * pi / 180.f;
 			return Vector(_v.x * cosf(rad) - _v.y * sinf(rad), _v.x * sinf(rad) + _v.y * cosf(rad));
 		}
 
-		inline bool IntersectSegmentRectangle(const Vector &_point, const Vector &_direction, const Rectangle &_rect, Vector *_result = nullptr)
+		inline bool IntersectSegmentRectangle(const Vector & _point, const Vector & _direction, const Rectangle & _rect, Vector *_result = nullptr)
 		{
 			auto rotated_point = RotateVector(_point - _rect.position, _rect.angle);
 			auto rotated_direction = RotateVector(_direction, _rect.angle);
@@ -64,9 +64,9 @@ namespace Engine
 			return true;
 		}
 
-		inline bool IntersectRayCircle(const Vector &_point, const Vector &_direction, const Vector &_center, float _radius, Vector *_result = nullptr)
+		inline bool IntersectRayCircle(const Vector & _point, const Vector & _direction, const Vector & _center, float _radius, Vector *_result = nullptr)
 		{
-			auto to_center = _center - _point;			
+			auto to_center = _center - _point;
 			float projection_scale = DotProduct(_direction.GetNormalized(), to_center);
 			auto projection = _point + _direction.GetNormalized() * projection_scale;
 			float distance = (projection - _center).Length();

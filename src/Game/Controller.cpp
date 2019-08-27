@@ -12,10 +12,6 @@ ControllerSystem::ControllerSystem(Input *_input)
 
 ControllerSystem::~ControllerSystem()
 {
-	for (auto c : controls)
-	{
-		delete c.second;
-	}
 }
 
 void ControllerSystem::Configure(World *_world)
@@ -26,7 +22,7 @@ void ControllerSystem::Configure(World *_world)
 	InitAI(_world);
 }
 
-void ControllerSystem::InitAI(World* _world)
+void ControllerSystem::InitAI(World *_world)
 {
 	ai = BTBuilder()
 		.Selector("select behavior")
@@ -86,36 +82,36 @@ void ControllerSystem::BindControls()
 	shoot->Bind(SDL_SCANCODE_SPACE, true);
 }
 
-void ControllerSystem::UnConfigure(World *_world)
+void ControllerSystem::UnConfigure(World*_world)
 {
 	_world->UnSubscribeAll(this);
 }
 
-void ControllerSystem::Update(World *_world, float _dt)
+void ControllerSystem::Update(World*_world, float _dt)
 {
-	_world->Each<Controller>([&](Entity *_entity, ComponentPtr<Controller> _ct) -> void
-	{
-		if (_entity->Is("Hero"))
+	_world->Each<Controller>([&](Entity*_entity, ComponentPtr<Controller> _ct) -> void
 		{
-			_ct->axis.y = GetControlValue<float>("Move");
-			_ct->axis.x = GetControlValue<float>("Strafe");
-			_ct->axis.Normalize();
+			if (_entity->Is("Hero"))
+			{
+				_ct->axis.y = GetControlValue<float>("Move");
+				_ct->axis.x = GetControlValue<float>("Strafe");
+				_ct->axis.Normalize();
 
-			_ct->rotation = GetControlValue<float>("Rotate");
-			_ct->is_shooting = GetControlValue<bool>("Shoot");
-		}
-		else
-		{
-			blackboard.me = _entity;
-			blackboard.dt = _dt;
-			blackboard.target = blackboard.world->GetByTag("Hero")->Get<Translation>()->position;
+				_ct->rotation = GetControlValue<float>("Rotate");
+				_ct->is_shooting = GetControlValue<bool>("Shoot");
+			}
+			else
+			{
+				blackboard.me = _entity;
+				blackboard.dt = _dt;
+				blackboard.target = blackboard.world->GetByTag("Hero")->Get<Translation>()->position;
 
-			ai->Update();
-		}
-	});
+				ai->Update();
+			}
+		});
 }
 
-void ControllerSystem::Receive(World *_world, const EndRound &_event)
+void ControllerSystem::Receive(World*_world, const EndRound & _event)
 {
 	FindNewLocation();
 }
@@ -154,8 +150,7 @@ Engine::BTStatus ControllerSystem::FindNewLocation()
 	do
 	{
 		location = Vector(rnd.GetFromZero(1280.f), rnd.GetFromZero(800.f));
-	} 
-	while (!IsCanSeeTargetFrom(location));
+	} while (!IsCanSeeTargetFrom(location));
 
 	blackboard.location = location;
 	blackboard.location_found = true;
@@ -163,18 +158,18 @@ Engine::BTStatus ControllerSystem::FindNewLocation()
 	return BTStatus::Success;
 }
 
-bool ControllerSystem::IsCanSeeTargetFrom(const Point &_position) const
+bool ControllerSystem::IsCanSeeTargetFrom(const Point & _position) const
 {
 	bool result = true;
 
 	blackboard.world->Each<Translation, PhysicBody>(
-		[&](Entity *_entity, ComponentPtr<Translation> _tr, ComponentPtr<PhysicBody> _pb) -> void
+		[&](Entity*_entity, ComponentPtr<Translation> _tr, ComponentPtr<PhysicBody> _pb) -> void
+		{
+			if (result && _entity->Is("Box"))
 			{
-				if (result && _entity->Is("Box"))
-				{
-					result = !Math::IntersectSegmentRectangle(_position, blackboard.target - _position, _tr->ToRectangle());
-				}
+				result = !Math::IntersectSegmentRectangle(_position, blackboard.target - _position, _tr->ToRectangle());
 			}
+		}
 	);
 
 	return result;
@@ -201,13 +196,13 @@ bool ControllerSystem::IsAimed() const
 uint32_t ControllerSystem::BulletsCount()
 {
 	uint32_t result = 0;
-	blackboard.world->All([&](Entity *_entity) -> void
-	{
-		if (_entity->Is("Bullet"))
+	blackboard.world->All([&](Entity*_entity) -> void
 		{
-			++result;
-		}
-	});
+			if (_entity->Is("Bullet"))
+			{
+				++result;
+			}
+		});
 	return result;
 }
 
@@ -221,7 +216,7 @@ Engine::BTStatus ControllerSystem::AimingToLocation()
 	return AimingTo(blackboard.location);
 }
 
-Engine::BTStatus ControllerSystem::AimingTo(const Point &_position)
+Engine::BTStatus ControllerSystem::AimingTo(const Point & _position)
 {
 	auto ct = blackboard.me->Get<Controller>();
 	auto tr = blackboard.me->Get<Translation>();
@@ -230,7 +225,7 @@ Engine::BTStatus ControllerSystem::AimingTo(const Point &_position)
 	auto rad = tr->angle * pi / 180.f;
 	Vector direction(cosf(rad), sinf(rad));
 
-	ct->rotation = Math::Sign(Math::DotProduct(direction, -tr->position + _position ));
+	ct->rotation = Math::Sign(Math::DotProduct(direction, -tr->position + _position));
 
 	if (IsAimed())
 	{
@@ -258,8 +253,7 @@ Engine::BTStatus ControllerSystem::Hiding()
 	do
 	{
 		location = Vector(rnd.GetFromZero(1280.f), rnd.GetFromZero(800.f));
-	}
-	while (IsCanSeeTargetFrom(location));
+	} while (IsCanSeeTargetFrom(location));
 
 	blackboard.location = location;
 	blackboard.location_found = true;

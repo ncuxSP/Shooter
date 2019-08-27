@@ -7,13 +7,13 @@ namespace Engine
 	public:
 		Application(const string &_name, const Size &_size);
 		virtual ~Application();
-	
+
 		int Run();
 
-		virtual void OnBegin();
-		virtual void OnUpdate(float _dt);
-		virtual void OnRender();
-		virtual void OnEnd();
+		virtual void OnBegin() = 0;
+		virtual void OnUpdate(float _dt) = 0;
+		virtual void OnRender() = 0;
+		virtual void OnEnd() = 0;
 
 	protected:
 		Graphics *graphics;

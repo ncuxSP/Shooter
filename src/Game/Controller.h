@@ -5,20 +5,28 @@ public:
 	virtual ~BaseControl() = 0 {}
 };
 
-template <class T>
+template <class ValueType>
 class Control : public BaseControl {
 public:
-	Control(T _default)
+	using Ptr = shared_ptr<Control<ValueType>>;
+
+public:
+	Control(ValueType _default)
 		: default_value(_default)
 	{}
 
-	virtual ~Control() override {}
+	virtual ~Control() override
+	{
+		cout << "delete control " << endl;
+	}
 
-	void Bind(uint32_t _key, T _value) {
+	void Bind(uint32_t _key, ValueType _value)
+	{
 		bindings.insert({ _key, _value });
 	}
 
-	T Update(Input* _input) {
+	ValueType Update(Input *_input)
+	{
 		for (auto c : bindings)
 		{
 			if (_input->IsKeyPressed(c.first))
@@ -30,8 +38,8 @@ public:
 	}
 
 private:
-	T default_value;
-	unordered_map<uint32_t, T> bindings;
+	ValueType default_value;
+	unordered_map<uint32_t, ValueType> bindings;
 };
 
 class ControllerSystem : public EntitySystem, EventSubscriber<EndRound>
@@ -50,13 +58,13 @@ public:
 	virtual void Receive(World *_world, const EndRound &_event) override;
 
 private:
-	template <class T>
-	Control<T> *CreateControl(const string &_name, T _value);
+	template <class ValueType>
+	shared_ptr<Control<ValueType>> CreateControl(const string &_name, ValueType _default);
 
-	template <class T>
-	T GetControlValue(const string& _name);
+	template <class ValueType>
+	ValueType GetControlValue(const string &_name);
 
-	void InitAI(World* _world);
+	void InitAI(World *_world);
 
 	void BindControls();
 
@@ -68,7 +76,7 @@ private:
 	BTStatus AimingTo(const Point &_position);
 	BTStatus Shooting();
 	BTStatus Hiding();
-	bool IsInTargetLocation() const; 
+	bool IsInTargetLocation() const;
 	bool IsCanSeeTargetFrom(const Point &_position) const;
 	bool IsCanSeeTarget() const;
 	bool IsAimed() const;
@@ -77,8 +85,8 @@ private:
 private:
 	Input *input;
 
-	unordered_map<string, BaseControl *> controls;
-	
+	unordered_map<string, shared_ptr<BaseControl>> controls;
+
 	BTree ai;
 	struct
 	{
@@ -91,22 +99,22 @@ private:
 	} blackboard;
 };
 
-template <class T>
-Control<T> *ControllerSystem::CreateControl(const string& _name, T _default)
+template <class ValueType>
+shared_ptr<Control<ValueType>> ControllerSystem::CreateControl(const string &_name, ValueType _default)
 {
-	auto c = new Control<T>(_default);
+	auto c = make_shared<Control<ValueType>>(_default);
 	controls.insert({ _name, c });
 	return c;
 }
 
-template <class T>
-T ControllerSystem::GetControlValue(const string& _name)
+template <class ValueType>
+ValueType ControllerSystem::GetControlValue(const string &_name)
 {
 	if (controls.count(_name) == 0)
 	{
 		cout << "Can't find control with name " << _name << endl;
 	}
-	auto control = reinterpret_cast<Control<T> *>(controls[_name]);
+	auto control = reinterpret_cast<Control<ValueType> *>(controls[_name].get());
 	return control->Update(input);
 }
 

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
 namespace Engine
-{	
+{
 	Image::Image(const string &_filename)
-		:	Image()
+		: Image()
 	{
 		surface = ImageCache::GetInstance().Get(_filename);
 		is_cached = true;
@@ -16,7 +16,7 @@ namespace Engine
 	}
 
 	Image::Image(const Size &_size, const Color &_color)
-		:	Image()
+		: Image()
 	{
 		size = _size;
 		surface = SDL_CreateRGBSurface(0, size.w, size.h, 32, _color.r, _color.g, _color.b, _color.a);
@@ -27,10 +27,10 @@ namespace Engine
 	}
 
 	Image::Image()
-		:	texture(nullptr)
-		,	surface(nullptr)
-		,	is_inited(false)
-		,	is_cached(false)
+		: texture(nullptr)
+		, surface(nullptr)
+		, is_inited(false)
+		, is_cached(false)
 	{
 
 	}
@@ -51,7 +51,7 @@ namespace Engine
 	{
 		is_inited = false;
 
-		SDL_Rect dst 
+		SDL_Rect dst
 		{
 			_position.x, _position.y,
 			_size.w, _size.h
@@ -78,7 +78,7 @@ namespace Engine
 			}
 		}
 	}
-	
+
 	ImageCache &ImageCache::GetInstance()
 	{
 		static ImageCache instance;
@@ -109,9 +109,9 @@ namespace Engine
 	}
 
 	ImageText::ImageText(const string &_text, const Size &_size, const Color &_color)
-		:	Image()
-		,	text(_text)
-		,	color(_color)
+		: Image()
+		, text(_text)
+		, color(_color)
 	{
 		font = TTF_OpenFont("data/arial.ttf", 48);
 		size = _size;

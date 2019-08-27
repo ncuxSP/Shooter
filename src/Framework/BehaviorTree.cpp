@@ -3,25 +3,27 @@
 #include "Composites.h"
 #include "Decorators.h"
 
+#include <typeinfo>
+
 namespace Engine
 {
 	namespace BehaviorTree
 	{
 
 		Node::Node(const string &_name)
-			:	name(_name)
+			: name(_name)
 		{
 
 		}
 
 		Node::~Node()
 		{
-
+			cout << "deleted " << name << typeid(this).name() << endl;
 		}
 
 		Leaf::Leaf(const string &_name, function<Status(void)> _action)
-			:	Node(_name)
-			,	action(_action)
+			: Node(_name)
+			, action(_action)
 		{
 
 		}
@@ -45,6 +47,7 @@ namespace Engine
 		}
 
 		Builder::Builder()
+			: current(nullptr)
 		{
 
 		}
@@ -66,9 +69,9 @@ namespace Engine
 		Builder &Builder::Condition(const string &_name, function<bool(void)> _condition)
 		{
 			return Action(_name, [_condition]() -> Status
-			{
-				return _condition() ? Status::Success : Status::Failure;
-			});
+				{
+					return _condition() ? Status::Success : Status::Failure;
+				});
 		}
 
 		Builder &Builder::Inverter(const string &_name)
@@ -76,21 +79,21 @@ namespace Engine
 			Add(new BehaviorTree::Inverter(_name));
 			return *this;
 		}
-// 
-// 		Builder &Builder::Failer(const string &_name)
-// 		{
-// 			// TODO: insert return statement here
-// 		}
-// 
-// 		Builder &Builder::Repeater(const string &_name)
-// 		{
-// 			// TODO: insert return statement here
-// 		}
-// 
-// 		Builder &Builder::Succeeder(const string &_name)
-// 		{
-// 			// TODO: insert return statement here
-// 		}
+		// 
+		// 		Builder &Builder::Failer(const string &_name)
+		// 		{
+		// 			// TODO: insert return statement here
+		// 		}
+		// 
+		// 		Builder &Builder::Repeater(const string &_name)
+		// 		{
+		// 			// TODO: insert return statement here
+		// 		}
+		// 
+		// 		Builder &Builder::Succeeder(const string &_name)
+		// 		{
+		// 			// TODO: insert return statement here
+		// 		}
 
 		Builder &Builder::Selector(const string &_name)
 		{

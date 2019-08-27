@@ -23,29 +23,29 @@ namespace Engine
 			virtual Status Update() override;
 		};
 
-// 		class Repeater : public Decorator
-// 		{
-// 		public:
-// 			Repeater(const string &_name);
-// 
-// 			virtual Status Update() override;
-// 		};
-// 
-// 		class Succeeder : public Decorator
-// 		{
-// 		public:
-// 			Succeeder(const string &_name);
-// 
-// 			virtual Status Update() override;
-// 		};
-// 
-// 		class Failer : public Decorator
-// 		{
-// 		public:
-// 			Failer(const string &_name);
-// 
-// 			virtual Status Update() override;
-// 		};
+		// 		class Repeater : public Decorator
+		// 		{
+		// 		public:
+		// 			Repeater(const string &_name);
+		// 
+		// 			virtual Status Update() override;
+		// 		};
+		// 
+		// 		class Succeeder : public Decorator
+		// 		{
+		// 		public:
+		// 			Succeeder(const string &_name);
+		// 
+		// 			virtual Status Update() override;
+		// 		};
+		// 
+		// 		class Failer : public Decorator
+		// 		{
+		// 		public:
+		// 			Failer(const string &_name);
+		// 
+		// 			virtual Status Update() override;
+		// 		};
 	}
 }
 

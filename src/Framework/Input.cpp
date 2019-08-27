@@ -4,8 +4,8 @@ namespace Engine
 {
 
 	Input::Input()
-		:	is_will_quit(false)
-		,	keyboard(nullptr)
+		: is_will_quit(false)
+		, keyboard(nullptr)
 	{
 
 	}
@@ -32,14 +32,14 @@ namespace Engine
 				auto index = event.key.keysym.scancode;
 				key_down[index] = true;
 			}
-				break;
+			break;
 			case SDL_KEYUP:
 			{
 				keyboard = SDL_GetKeyboardState(nullptr);
 				auto index = event.key.keysym.scancode;
 				key_up[index] = true;
 			}
-				break;
+			break;
 			case SDL_TEXTINPUT:
 			case SDL_MOUSEMOTION:
 			case SDL_MOUSEBUTTONDOWN:

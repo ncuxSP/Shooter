@@ -3,25 +3,25 @@
 namespace Engine
 {
 	Application::Application(const string &_name, const Size &_size)
-		:	is_failed(false)
-		,	size(_size)
+		: is_failed(false)
+		, size(_size)
 	{
 		const Point pos(100);
-	
+
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		{
 			cout << " Failed to initialize SDL : " << SDL_GetError() << endl;
 			is_failed = true;
 		}
-	
+
 		window = SDL_CreateWindow(_name.c_str(), pos.x, pos.y, _size.x, _size.y, SDL_WINDOW_SHOWN);
-	
+
 		if (window == nullptr)
 		{
 			cout << "Failed to create window : " << SDL_GetError() << endl;
 			is_failed = true;
 		}
-	
+
 		graphics = new Graphics(window, size);
 		input = new Input();
 
@@ -38,18 +38,19 @@ namespace Engine
 			is_failed = true;
 		}
 	}
-	
+
 	Application::~Application()
 	{
 		delete input;
 		delete graphics;
+
 		SDL_DestroyWindow(window);
 
 		IMG_Quit();
 		TTF_Quit();
 		SDL_Quit();
 	}
-	
+
 	int Application::Run()
 	{
 		if (is_failed)
@@ -81,28 +82,8 @@ namespace Engine
 		}
 
 		OnEnd();
-	
+
 		return 0;
-	}
-
-	void Application::OnBegin()
-	{
-
-	}
-
-	void Application::OnUpdate(float _dt)
-	{
-
-	}
-
-	void Application::OnRender()
-	{
-
-	}
-
-	void Application::OnEnd()
-	{
-
 	}
 
 }

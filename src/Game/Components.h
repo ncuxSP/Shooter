@@ -1,7 +1,7 @@
 #pragma once
 
-//Components
 
+//Components
 
 struct Translation
 {
@@ -61,7 +61,7 @@ struct Text
 
 struct Controller
 {
-	Controller() 
+	Controller()
 		: axis(0.f)
 		, rotation(0.f)
 		, is_shooting(false)
@@ -73,6 +73,7 @@ struct Controller
 	bool is_shooting;
 	float shoot_delay;
 };
+
 
 //Events
 

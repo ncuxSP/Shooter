@@ -8,9 +8,9 @@ namespace Engine
 			: last_id(0)
 			, start_reset(false)
 		{
-		
+
 		}
-		
+
 		World::~World()
 		{
 			for (auto *system : systems)
@@ -24,33 +24,33 @@ namespace Engine
 				delete entity;
 			}
 		}
-		
+
 		Entity *World::Create(const string &_tag /*= ""*/)
 		{
 			++last_id;
 			auto entity = new Entity(this, last_id, _tag);
-			created_entities.push_back(entity);	
+			created_entities.push_back(entity);
 			Emit<Events::OnEntityCreated>({ entity });
-	
+
 			return entity;
 		}
-		
+
 		void World::Destroy(Entity *_entity)
 		{
 			if (find(removed_entities.begin(), removed_entities.end(), _entity) == removed_entities.end())
 			{
-				removed_entities.push_back(_entity);	
+				removed_entities.push_back(_entity);
 				Emit<Events::OnEntityRemoved>({ _entity });
 			}
 		}
-		
+
 		void World::Update(float _dt)
 		{
 			for (auto *system : systems)
 			{
 				system->Update(this, _dt);
 			}
-	
+
 			if (removed_entities.size() > 0)
 			{
 				for (auto *entity : removed_entities)
@@ -61,13 +61,13 @@ namespace Engine
 				}
 				removed_entities.clear();
 			}
-	
+
 			if (created_entities.size() > 0)
 			{
 				entities.insert(entities.end(), created_entities.begin(), created_entities.end());
 				created_entities.clear();
 			}
-	
+
 			if (start_reset)
 			{
 				for (auto *entity : entities)
@@ -80,24 +80,24 @@ namespace Engine
 				start_reset = false;
 			}
 		}
-		
+
 		void World::Reset()
 		{
 			start_reset = true;
 		}
-		
+
 		void World::RegisterSystem(EntitySystem *_system)
 		{
 			systems.push_back(_system);
 			_system->Configure(this);
 		}
-		
+
 		void World::UnRegisterSystem(EntitySystem *_system)
 		{
 			systems.erase(remove(systems.begin(), systems.end(), _system), systems.end());
 			_system->UnConfigure(this);
 		}
-		
+
 		void World::UnSubscribeAll(Internal::BaseSubscriber *_subscriber)
 		{
 			vector<Internal::TypeIndex> to_delete;
@@ -112,9 +112,9 @@ namespace Engine
 			for (auto id : to_delete)
 			{
 				subscribers.erase(id);
-			}			
+			}
 		}
-		
+
 		void World::EachTag(const string &_tag, function<void(Entity *)> _call_back)
 		{
 			for (auto *entity : entities)
@@ -125,7 +125,7 @@ namespace Engine
 				}
 			}
 		}
-	
+
 		void World::All(function<void(Entity *)> _call_back)
 		{
 			for (auto *entity : entities)
@@ -133,7 +133,7 @@ namespace Engine
 				_call_back(entity);
 			}
 		}
-	
+
 		Entity *World::GetByTag(const string &_tag) const
 		{
 			for (auto *entity : entities)
@@ -143,6 +143,7 @@ namespace Engine
 					return entity;
 				}
 			}
+			return nullptr;
 		}
 	}
 }
