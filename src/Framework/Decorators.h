@@ -4,12 +4,12 @@ namespace Engine
 {
 	namespace BehaviorTree
 	{
-		class Decorator : public Parrent
+		class Decorator : public Parent
 		{
 		public:
 			Decorator(const string &_name);
 
-			virtual void AddChild(Node *_child) override;
+			void AddChild(Node *_child) override;
 
 		protected:
 			unique_ptr<Node> child;
@@ -20,7 +20,7 @@ namespace Engine
 		public:
 			Inverter(const string &_name);
 
-			virtual Status Update() override;
+			Status Update() override;
 		};
 
 		// 		class Repeater : public Decorator

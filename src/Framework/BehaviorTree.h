@@ -31,16 +31,16 @@ namespace Engine
 		public:
 			Leaf(const string &_name, function<Status(void)> _action);
 
-			virtual Status Update() override;
+			Status Update() override;
 
 		private:
 			function<Status(void)> action;
 		};
 
-		class Parrent : public Node
+		class Parent : public Node
 		{
 		public:
-			Parrent(const string &_name);
+			Parent(const string &_name);
 
 			virtual void AddChild(Node *_child) = 0;
 		};
@@ -67,11 +67,11 @@ namespace Engine
 			Node::Ptr Build();
 
 		private:
-			void Add(Parrent *_node);
+			void Add(Parent *_node);
 
 		private:
 			Node *current;
-			stack<Parrent *> parrents;
+			stack<Parent *> parrents;
 		};
 	}
 

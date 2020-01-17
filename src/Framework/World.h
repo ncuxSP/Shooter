@@ -35,7 +35,7 @@ namespace Engine
 			void Emit(const EventType &_event);
 
 			template <typename... ArgumentTypes>
-			void Each(typename common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back);
+			void Each(common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back);
 
 			void EachTag(const string &_tag, function<void(Entity *)> _call_back);
 
@@ -101,13 +101,13 @@ namespace Engine
 		}
 
 		template <typename... ArgumentTypes>
-		void World::Each(typename common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back)
+		void World::Each(common_type_t<function<void(Entity *, ComponentPtr<ArgumentTypes>...)>> _call_back)
 		{
 			for (auto *entity : entities)
 			{
 				if (entity->Has<ArgumentTypes...>())
 				{
-					_call_back(entity, entity->template Get<ArgumentTypes>()...);
+					_call_back(entity, entity->Get<ArgumentTypes>()...);
 				}
 			}
 		}

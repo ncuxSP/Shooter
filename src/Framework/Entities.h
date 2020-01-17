@@ -26,11 +26,18 @@ namespace Engine
 			class Component : public BaseComponent
 			{
 			public:
-				Component() {}
-				Component(const AnyStruct &_data) : data(_data) {}
-				virtual ~Component() override {}
+				Component(AnyStruct &&_data) : data(forward<AnyStruct>(_data)) {}
+				~Component() override {}
 
-			public:
+				AnyStruct* GetData() {
+					return &data;
+				}
+				void Assign(AnyStruct &&_data) {
+					data = forward<AnyStruct>(_data);
+				}
+
+			private:
+				Component() = default;
 				AnyStruct data;
 			};
 
@@ -86,7 +93,7 @@ namespace Engine
 		class EntitySystem
 		{
 		public:
-			virtual ~EntitySystem() = 0 {}
+			virtual ~EntitySystem() = default;
 
 			virtual void Configure(World *_world) = 0;
 			virtual void UnConfigure(World *_world) = 0;
@@ -117,7 +124,7 @@ namespace Engine
 		class EventSubscriber : public Internal::BaseSubscriber
 		{
 		public:
-			virtual ~EventSubscriber() override {}
+			~EventSubscriber() override {}
 
 			virtual void Receive(World *_world, const EventType &_event) = 0;
 		};
@@ -178,7 +185,7 @@ namespace Engine
 
 		inline void Entity::RemoveAll()
 		{
-			for (auto pair : components)
+			for (auto &pair : components)
 			{
 				delete pair.second;
 			}
@@ -189,19 +196,20 @@ namespace Engine
 		ComponentPtr<AnyStruct> Entity::Assign(ConstructorArgs &&... _args)
 		{
 			Internal::Component<AnyStruct> *component;
-			auto found = components.find(Internal::GetTypeIndex<AnyStruct>());
+			auto typeIndex = Internal::GetTypeIndex<AnyStruct>();
+			auto found = components.find(typeIndex);
 			if (found != components.end())
 			{
 				component = reinterpret_cast<Internal::Component<AnyStruct> *>(found->second);
-				component->data = AnyStruct(_args...);
+				component->Assign(AnyStruct(_args...));
 			}
 			else
 			{
 				component = new Internal::Component<AnyStruct>(AnyStruct(_args...));
-				components.insert({ Internal::GetTypeIndex<AnyStruct>(), component });
+				components.insert({ typeIndex, component });
 			}
 
-			auto ptr = ComponentPtr<AnyStruct>(&component->data);
+			auto ptr = ComponentPtr<AnyStruct>(component->GetData());
 			world->Emit<Events::OnComponentAssigned<AnyStruct>>({ this, ptr });
 
 			return ptr;
@@ -214,7 +222,7 @@ namespace Engine
 			if (found != components.end())
 			{
 				auto component = reinterpret_cast<Internal::Component<AnyStruct> *>(found->second);
-				return ComponentPtr<AnyStruct>(&component->data);
+				return ComponentPtr<AnyStruct>(component->GetData());
 			}
 			else
 			{

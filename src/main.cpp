@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-	Game app("Shooter", Size(1280, 800));
+	Game game("Shooter", Size(1280, 800));
 
-	return app.Run();
+	return game.Run();
 }

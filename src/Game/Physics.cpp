@@ -51,12 +51,12 @@ void PhysicSystem::Update(World *_world, float _dt)
 
 void PhysicSystem::Receive(World *_world, const Events::OnComponentAssigned<PhysicBody> & _event)
 {
-	auto tr = _event.entity->Get<Translation>();
+	//auto tr = _event.entity->Get<Translation>();
 }
 
 CollisionSystem::CollisionSystem(const Size & _size)
-	: size(_size)
-	, graphics(nullptr)
+	: graphics(nullptr)
+	, size(_size)
 {
 
 }

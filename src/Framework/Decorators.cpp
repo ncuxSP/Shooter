@@ -9,7 +9,7 @@ namespace Engine
 	{
 
 		Decorator::Decorator(const string &_name)
-			: Parrent(_name)
+			: Parent(_name)
 		{
 
 		}

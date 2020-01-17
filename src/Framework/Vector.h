@@ -2,8 +2,8 @@
 
 namespace Engine
 {
-	template<class Type, class = typename enable_if_t<is_arithmetic_v<Type>>>
-	inline bool MathVectorEqual(Type _a, Type _b)
+	template<class Type, class = enable_if_t<is_arithmetic_v<Type>>>
+	bool MathVectorEqual(Type _a, Type _b)
 	{
 		return (_a == _b);
 	}
@@ -13,7 +13,7 @@ namespace Engine
 		return (fabs(_a - _b) < numeric_limits<float>::epsilon());
 	}
 
-	template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
+	template<class Type, uint32_t Size, class = enable_if_t<is_arithmetic_v<Type>>>
 	class MathVectorBase
 	{
 	public:
@@ -27,11 +27,11 @@ namespace Engine
 	class MathVector : public MathVectorBase<Type, Size>
 	{
 	public:
-		inline MathVector()
+		MathVector()
 		{
 		}
 
-		inline MathVector(const MathVector &_vector)
+		MathVector(const MathVector &_vector)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -40,7 +40,7 @@ namespace Engine
 		}
 
 		template<class _Type, uint32_t _Size>
-		inline MathVector(const MathVector<_Type, _Size> &_vector)
+		MathVector(const MathVector<_Type, _Size> &_vector)
 		{
 			const uint32_t min_size = Size < _Size ? Size : _Size;
 
@@ -55,7 +55,7 @@ namespace Engine
 			}
 		}
 
-		inline MathVector(const Type *_v)
+		MathVector(const Type *_v)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -63,7 +63,7 @@ namespace Engine
 			}
 		}
 
-		inline MathVector(Type _value)
+		MathVector(Type _value)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -71,22 +71,22 @@ namespace Engine
 			}
 		}
 
-		inline MathVector(Type _x, Type _y)
+		MathVector(Type _x, Type _y)
 			: MathVectorBase<Type, Size>(_x, _y)
 		{
 		}
 
-		inline MathVector(Type _x, Type _y, Type _z)
+		MathVector(Type _x, Type _y, Type _z)
 			: MathVectorBase<Type, Size>(_x, _y, _z)
 		{
 		}
 
-		inline MathVector(Type _x, Type _y, Type _z, Type _w)
+		MathVector(Type _x, Type _y, Type _z, Type _w)
 			: MathVectorBase<Type, Size>(_x, _y, _z, _w)
 		{
 		}
 
-		inline Type LengthSquare() const
+		Type LengthSquare() const
 		{
 			Type length = static_cast<Type>(0);
 
@@ -98,17 +98,17 @@ namespace Engine
 			return length;
 		}
 
-		inline float Length() const
+		float Length() const
 		{
 			return sqrtf(static_cast<float>(LengthSquare()));
 		}
 
-		inline void Normalize()
+		void Normalize()
 		{
 			SetLength(static_cast<Type>(1));
 		}
 
-		inline MathVector GetNormalized() const
+		MathVector GetNormalized() const
 		{
 			MathVector normalized_vector = *this;
 			normalized_vector.Normalize();
@@ -116,7 +116,7 @@ namespace Engine
 			return normalized_vector;
 		}
 
-		inline void SetLength(float _length)
+		void SetLength(float _length)
 		{
 			float magnitude = Length() / _length;
 
@@ -128,7 +128,7 @@ namespace Engine
 			*this /= magnitude;
 		}
 
-		inline void Copy(Type *_v)
+		void Copy(Type *_v)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -136,7 +136,7 @@ namespace Engine
 			}
 		}
 
-		inline MathVector operator = (const MathVector &_vector)
+		MathVector& operator = (const MathVector &_vector)
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -147,7 +147,7 @@ namespace Engine
 		}
 
 		template<class _Type, uint32_t _Size>
-		inline MathVector<Type, Size> operator = (const MathVector<_Type, _Size> &_vector)
+		MathVector<Type, Size>& operator = (const MathVector<_Type, _Size> &_vector)
 		{
 			const uint32_t min_size = Size < _Size ? Size : _Size;
 
@@ -164,7 +164,7 @@ namespace Engine
 			return *this;
 		}
 
-		inline MathVector operator + (const MathVector &_vector) const
+		MathVector operator + (const MathVector &_vector) const
 		{
 			MathVector new_vector;
 
@@ -177,7 +177,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> operator + (const MathVector<_Type, Size> &_vector) const
+		MathVector<Type, Size> operator + (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -189,7 +189,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		inline MathVector operator - (const MathVector &_vector) const
+		MathVector operator - (const MathVector &_vector) const
 		{
 			MathVector new_vector;
 
@@ -202,7 +202,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> operator - (const MathVector<_Type, Size> &_vector) const
+		MathVector<Type, Size> operator - (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -214,7 +214,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		inline MathVector operator * (const MathVector &_vector) const
+		MathVector operator * (const MathVector &_vector) const
 		{
 			MathVector new_vector;
 
@@ -227,7 +227,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> operator * (const MathVector<_Type, Size> &_vector) const
+		MathVector<Type, Size> operator * (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -239,7 +239,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		inline MathVector operator / (const MathVector &_vector) const
+		MathVector operator / (const MathVector &_vector) const
 		{
 			MathVector new_vector;
 
@@ -252,7 +252,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> operator / (const MathVector<_Type, Size> &_vector) const
+		MathVector<Type, Size> operator / (const MathVector<_Type, Size> &_vector) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -265,7 +265,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> operator * (_Type _scale) const
+		MathVector<Type, Size> operator * (_Type _scale) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -278,7 +278,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector operator / (_Type _scale) const
+		MathVector operator / (_Type _scale) const
 		{
 			MathVector<Type, Size> new_vector;
 
@@ -290,7 +290,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		inline MathVector operator - (void) const
+		MathVector operator - (void) const
 		{
 			MathVector new_vector;
 
@@ -302,7 +302,7 @@ namespace Engine
 			return new_vector;
 		}
 
-		inline MathVector &operator += (const MathVector &_vector)
+		MathVector &operator += (const MathVector &_vector)
 		{
 			*this = *this + _vector;
 
@@ -310,14 +310,14 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> &operator += (const MathVector<_Type, Size> &_vector)
+		MathVector<Type, Size> &operator += (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this + _vector;
 
 			return *this;
 		}
 
-		inline MathVector &operator -= (const MathVector &_vector)
+		MathVector &operator -= (const MathVector &_vector)
 		{
 			*this = *this - _vector;
 
@@ -325,14 +325,14 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> &operator -= (const MathVector<_Type, Size> &_vector)
+		MathVector<Type, Size> &operator -= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this - _vector;
 
 			return *this;
 		}
 
-		inline MathVector &operator *= (const MathVector &_vector)
+		MathVector &operator *= (const MathVector &_vector)
 		{
 			*this = *this * _vector;
 
@@ -340,14 +340,14 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> &operator *= (const MathVector<_Type, Size> &_vector)
+		MathVector<Type, Size> &operator *= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this * _vector;
 
 			return *this;
 		}
 
-		inline MathVector &operator /= (const MathVector &_vector)
+		MathVector &operator /= (const MathVector &_vector)
 		{
 			*this = *this / _vector;
 
@@ -355,7 +355,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector<Type, Size> &operator /= (const MathVector<_Type, Size> &_vector)
+		MathVector<Type, Size> &operator /= (const MathVector<_Type, Size> &_vector)
 		{
 			*this = *this / _vector;
 
@@ -363,7 +363,7 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector &operator *= (_Type _scale)
+		MathVector &operator *= (_Type _scale)
 		{
 			*this = *this * _scale;
 
@@ -371,14 +371,14 @@ namespace Engine
 		}
 
 		template<class _Type>
-		inline MathVector &operator /= (_Type _scale)
+		MathVector &operator /= (_Type _scale)
 		{
 			*this = *this / _scale;
 
 			return *this;
 		}
 
-		inline bool operator == (const MathVector &_vector) const
+		bool operator == (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -391,7 +391,7 @@ namespace Engine
 			return true;
 		}
 
-		inline bool operator != (const MathVector &_vector) const
+		bool operator != (const MathVector &_vector) const
 		{
 			for (uint32_t i = 0; i < Size; ++i)
 			{
@@ -426,11 +426,11 @@ namespace Engine
 		};
 
 	public:
-		inline MathVectorBase()
+		MathVectorBase()
 		{
 		}
 
-		inline MathVectorBase(Type _x, Type _y)
+		MathVectorBase(Type _x, Type _y)
 			: x(_x), y(_y)
 		{
 		}
@@ -456,11 +456,11 @@ namespace Engine
 		};
 
 	public:
-		inline MathVectorBase()
+		MathVectorBase()
 		{
 		}
 
-		inline MathVectorBase(Type _x, Type _y, Type _z)
+		MathVectorBase(Type _x, Type _y, Type _z)
 			: x(_x), y(_y), z(_z)
 		{
 		}
@@ -486,17 +486,17 @@ namespace Engine
 		};
 
 	public:
-		inline MathVectorBase()
+		MathVectorBase()
 			: x(0), y(0), z(0), w(0)
 		{
 		}
 
-		inline MathVectorBase(Type _x, Type _y, Type _z, Type _w)
+		MathVectorBase(Type _x, Type _y, Type _z, Type _w)
 			: x(_x), y(_y), z(_z), w(_w)
 		{
 		}
 
-		inline MathVectorBase(Type _rgb, Type _a)
+		MathVectorBase(Type _rgb, Type _a)
 			: x(_rgb), y(_rgb), z(_rgb), w(_a)
 		{
 		}
@@ -504,8 +504,8 @@ namespace Engine
 
 	namespace Math
 	{
-		template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
-		inline Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
+		template<class Type, uint32_t Size, class = enable_if_t<is_arithmetic_v<Type>>>
+		Type DotProduct(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b)
 		{
 			Type result = static_cast<Type>(0);
 
@@ -517,8 +517,8 @@ namespace Engine
 			return result;
 		}
 
-		template<class Type, class = typename enable_if_t<is_arithmetic_v<Type>>>
-		inline MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
+		template<class Type, class = enable_if_t<is_arithmetic_v<Type>>>
+		MathVector<Type, 3> CrossProduct(const MathVector<Type, 3> &_a, const MathVector<Type, 3> &_b)
 		{
 			MathVector<Type, 3> result;
 
@@ -529,8 +529,8 @@ namespace Engine
 			return result;
 		}
 
-		template<class Type, uint32_t Size, class = typename enable_if_t<is_arithmetic_v<Type>>>
-		inline bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b, const MathVector<Type, Size> &_point)
+		template<class Type, uint32_t Size, class = enable_if_t<is_arithmetic_v<Type>>>
+		bool IsInsideSegment(const MathVector<Type, Size> &_a, const MathVector<Type, Size> &_b, const MathVector<Type, Size> &_point)
 		{
 			return (DotProduct((_a - _point), (_b - _point)) <= 0);
 		}

@@ -2,7 +2,6 @@
 
 namespace Engine
 {
-#define EKEY(a) SDL_SCANCODE_(a)
 	const uint32_t KEYS_COUNT = 282;
 
 	class Input
@@ -16,7 +15,7 @@ namespace Engine
 		bool IsKeyDown(uint32_t _key) const;
 		bool IsKeyUp(uint32_t _key) const;
 
-		inline bool IsWillQuit() const
+		bool IsWillQuit() const
 		{
 			return is_will_quit;
 		}

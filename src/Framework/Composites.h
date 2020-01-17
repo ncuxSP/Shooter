@@ -4,12 +4,12 @@ namespace Engine
 {
 	namespace BehaviorTree
 	{
-		class Composite : public Parrent
+		class Composite : public Parent
 		{
 		public:
 			Composite(const string &_name);
 
-			virtual void AddChild(Node *_child) override;
+			void AddChild(Node *_child) override;
 
 		protected:
 			vector<unique_ptr<Node>> children;
@@ -20,7 +20,7 @@ namespace Engine
 		public:
 			Parallel(const string &_name);
 
-			virtual Status Update() override;
+			Status Update() override;
 		};
 
 		class Selector : public Composite
@@ -28,7 +28,7 @@ namespace Engine
 		public:
 			Selector(const string &_name);
 
-			virtual Status Update() override;
+			Status Update() override;
 
 		private:
 			uint32_t last;
@@ -39,7 +39,7 @@ namespace Engine
 		public:
 			Sequence(const string &_name);
 
-			virtual Status Update() override;
+			Status Update() override;
 
 		private:
 			uint32_t last;

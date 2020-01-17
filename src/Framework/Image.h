@@ -58,7 +58,7 @@ namespace Engine
 	{
 	public:
 		ImageText(const string &_text, const Size &_size, const Color &_color);
-		virtual ~ImageText() override;
+		~ImageText() override;
 
 		void SetText(const string &_text);
 

@@ -35,13 +35,13 @@ namespace Engine
 			return action();
 		}
 
-		Parrent::Parrent(const string &_name)
+		Parent::Parent(const string &_name)
 			: Node(_name)
 		{
 
 		}
 
-		void Parrent::AddChild(Node *_child)
+		void Parent::AddChild(Node *_child)
 		{
 
 		}
@@ -125,7 +125,7 @@ namespace Engine
 			return Node::Ptr(current);
 		}
 
-		void Builder::Add(Parrent *_node)
+		void Builder::Add(Parent *_node)
 		{
 			if (parrents.size() > 0)
 			{

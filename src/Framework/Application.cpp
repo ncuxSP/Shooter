@@ -3,8 +3,8 @@
 namespace Engine
 {
 	Application::Application(const string &_name, const Size &_size)
-		: is_failed(false)
-		, size(_size)
+		: size(_size)
+		, is_failed(false)
 	{
 		const Point pos(100);
 

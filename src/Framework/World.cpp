@@ -1,9 +1,7 @@
 #include "stdafx.h"
 
-namespace Engine
+namespace Engine::Framework
 {
-	namespace Framework
-	{
 		World::World()
 			: last_id(0)
 			, start_reset(false)
@@ -28,7 +26,7 @@ namespace Engine
 		Entity *World::Create(const string &_tag /*= ""*/)
 		{
 			++last_id;
-			auto entity = new Entity(this, last_id, _tag);
+			const auto entity = new Entity(this, last_id, _tag);
 			created_entities.push_back(entity);
 			Emit<Events::OnEntityCreated>({ entity });
 
@@ -51,7 +49,7 @@ namespace Engine
 				system->Update(this, _dt);
 			}
 
-			if (removed_entities.size() > 0)
+			if (!removed_entities.empty())
 			{
 				for (auto *entity : removed_entities)
 				{
@@ -62,7 +60,7 @@ namespace Engine
 				removed_entities.clear();
 			}
 
-			if (created_entities.size() > 0)
+			if (!created_entities.empty())
 			{
 				entities.insert(entities.end(), created_entities.begin(), created_entities.end());
 				created_entities.clear();
@@ -104,7 +102,7 @@ namespace Engine
 			for (auto &pair : subscribers)
 			{
 				pair.second.erase(remove(pair.second.begin(), pair.second.end(), _subscriber), pair.second.end());
-				if (pair.second.size() == 0)
+				if (pair.second.empty())
 				{
 					to_delete.push_back(pair.first);
 				}
@@ -145,5 +143,4 @@ namespace Engine
 			}
 			return nullptr;
 		}
-	}
 }

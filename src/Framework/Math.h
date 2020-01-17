@@ -11,7 +11,7 @@ namespace Engine
 			float angle;
 		};
 
-		template <class ValueType, class = typename enable_if_t<is_arithmetic_v<ValueType>>>
+		template <class ValueType, class = enable_if_t<is_arithmetic_v<ValueType>>>
 		ValueType Sign(ValueType _in)
 		{
 			auto zero = static_cast<ValueType>(0);

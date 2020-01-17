@@ -15,7 +15,7 @@ public:
 		: default_value(_default)
 	{}
 
-	virtual ~Control() override
+	~Control() override
 	{
 		cout << "delete control " << endl;
 	}
@@ -47,15 +47,12 @@ class ControllerSystem : public EntitySystem, EventSubscriber<EndRound>
 public:
 	ControllerSystem(Input *_input);
 
-	virtual ~ControllerSystem() override;
+	~ControllerSystem() override;
 
-	virtual void Configure(World *_world) override;
-
-	virtual void UnConfigure(World *_world) override;
-
-	virtual void Update(World *_world, float _dt) override;
-
-	virtual void Receive(World *_world, const EndRound &_event) override;
+	void Configure(World *_world) override;
+	void UnConfigure(World *_world) override;
+	void Update(World *_world, float _dt) override;
+	void Receive(World *_world, const EndRound &_event) override;
 
 private:
 	template <class ValueType>
@@ -63,10 +60,9 @@ private:
 
 	template <class ValueType>
 	ValueType GetControlValue(const string &_name);
+	void BindControls();
 
 	void InitAI(World *_world);
-
-	void BindControls();
 
 	//Behaviors
 	BTStatus Moving();
@@ -90,11 +86,11 @@ private:
 	BTree ai;
 	struct
 	{
-		World *world;
-		Entity *me;
-		float dt;
+		World *world{};
+		Entity *me{};
+		float dt{};
 		Vector target;
-		bool location_found;
+		bool location_found{};
 		Vector location;
 	} blackboard;
 };

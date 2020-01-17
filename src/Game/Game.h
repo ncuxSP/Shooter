@@ -13,14 +13,14 @@ class Game : public Application, EventSubscriber<EndRound>
 {
 public:
 	Game(const string &_name, const Size &_size);
-	virtual ~Game() override;
+	~Game() override;
 
-	virtual void OnBegin() override;
-	virtual void OnUpdate(float _dt) override;
-	virtual void OnRender() override;
-	virtual void OnEnd() override;
+	void OnBegin() override;
+	void OnUpdate(float _dt) override;
+	void OnRender() override;
+	void OnEnd() override;
 
-	virtual void Receive(World *_world, const EndRound &_event) override;
+	void Receive(World *_world, const EndRound &_event) override;
 
 private:
 	void SpawnBlocks(uint32_t _count);
@@ -29,7 +29,7 @@ private:
 private:
 	unique_ptr<World> world;
 	bool is_game_started;
-	float spawn_characters_delay;
-	ScoreText scores;
+	float spawn_characters_delay{};
+	ScoreText scores{};
 	bool restart;
 };

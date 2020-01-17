@@ -6,8 +6,8 @@
 
 ControllerSystem::ControllerSystem(Input *_input)
 	: input(_input)
+	, blackboard()
 {
-
 }
 
 ControllerSystem::~ControllerSystem()
@@ -51,7 +51,7 @@ void ControllerSystem::InitAI(World *_world)
 				.Action("moving", bind(&ControllerSystem::Moving, this))
 			.End()
 		.End()
-		.Build();
+	.Build();
 
 	blackboard.world = _world;
 	FindNewLocation();

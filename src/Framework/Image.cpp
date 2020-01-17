@@ -7,12 +7,14 @@ namespace Engine
 	{
 		surface = ImageCache::GetInstance().Get(_filename);
 		is_cached = true;
-		if (surface == nullptr)
+		if (surface != nullptr)
 		{
+			size.w = surface->clip_rect.w;
+			size.h = surface->clip_rect.h;
+		}
+		else {
 			cout << "IMG_Load Error: " << IMG_GetError() << endl;
 		}
-		size.w = surface->clip_rect.w;
-		size.h = surface->clip_rect.h;
 	}
 
 	Image::Image(const Size &_size, const Color &_color)
@@ -27,8 +29,8 @@ namespace Engine
 	}
 
 	Image::Image()
-		: texture(nullptr)
-		, surface(nullptr)
+		: surface(nullptr)
+		, texture(nullptr)
 		, is_inited(false)
 		, is_cached(false)
 	{

@@ -9,7 +9,7 @@ namespace Engine
 	{
 
 		Composite::Composite(const string &_name)
-			: Parrent(_name)
+			: Parent(_name)
 		{
 
 		}
